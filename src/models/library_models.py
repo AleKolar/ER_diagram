@@ -61,7 +61,7 @@ class Book(Model):
     isbn: Mapped[Optional[str]] = mapped_column(String(13), unique=True, comment='ISBN')
     created_at: Mapped[datetime] = mapped_column(
         DateTime,
-        default=datetime.utcnow,
+        default=datetime.now,
         server_default=func.now()
     )
 
@@ -114,7 +114,7 @@ class BookCopy(Model):
     acquired_date: Mapped[Optional[datetime]] = mapped_column(Date, comment='Дата поступления')
     created_at: Mapped[datetime] = mapped_column(
         DateTime,
-        default=datetime.utcnow,
+        default=datetime.now,
         server_default=func.now()
     )
 
@@ -142,7 +142,7 @@ class Reader(Model):
     passport_data: Mapped[Optional[str]] = mapped_column(String(100), comment='Паспортные данные')
     registration_date: Mapped[datetime] = mapped_column(
         Date,
-        default=datetime.utcnow,
+        default=datetime.now,
         server_default=func.now()
     )
     is_active: Mapped[bool] = mapped_column(
@@ -179,7 +179,7 @@ class Employee(Model):
     email: Mapped[str] = mapped_column(String(100), unique=True, comment='Email')
     hire_date: Mapped[datetime] = mapped_column(
         Date,
-        default=datetime.utcnow,
+        default=datetime.now,
         comment='Дата приема на работу'
     )
     is_active: Mapped[bool] = mapped_column(
@@ -255,7 +255,7 @@ class Issue(Model):
     )
     issue_date: Mapped[datetime] = mapped_column(
         Date,
-        default=datetime.utcnow,
+        default=datetime.now,
         nullable=False,
         comment='Дата выдачи'
     )
@@ -278,7 +278,7 @@ class Issue(Model):
     notes: Mapped[Optional[str]] = mapped_column(Text, comment='Примечания')
     created_at: Mapped[datetime] = mapped_column(
         DateTime,
-        default=datetime.utcnow,
+        default=datetime.now,
         server_default=func.now()
     )
 
