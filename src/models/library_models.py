@@ -1,9 +1,9 @@
 # src/library_models
 """
-Модели SQLAlchemy для библиотечной системы (SQLAlchemy 2.0 style)
+Модели SQLAlchemy для библиотечной системы с русскими комментариями
 """
-from sqlalchemy import String, ForeignKey, Date, DateTime, Text, Boolean, func, Integer
-from sqlalchemy.orm import relationship, validates, Mapped, mapped_column
+from sqlalchemy import String, ForeignKey, DateTime, Text, Integer, func
+from sqlalchemy.orm import relationship, Mapped, mapped_column
 from datetime import datetime
 from src.database.er_db import Model
 from typing import Optional, List
@@ -12,296 +12,221 @@ from typing import Optional, List
 class Catalog(Model):
     """Каталог книг"""
     __tablename__ = 'catalogs'
+    __table_args__ = {'comment': 'Каталоги книг'}
 
-    catalog_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    name: Mapped[str] = mapped_column(String(200), nullable=False, comment='Название каталога')
-    description: Mapped[Optional[str]] = mapped_column(Text, comment='Описание каталога')
+    catalog_id: Mapped[int] = mapped_column(
+        Integer, primary_key=True, autoincrement=True,
+        comment='Уникальный идентификатор каталога'
+    )
+    name: Mapped[str] = mapped_column(
+        String(200), nullable=False,
+        comment='Название каталога'
+    )
+    description: Mapped[Optional[str]] = mapped_column(
+        Text, comment='Описание каталога'
+    )
     parent_id: Mapped[Optional[int]] = mapped_column(
-        Integer,
-        ForeignKey('catalogs.catalog_id'),
+        Integer, ForeignKey('catalogs.catalog_id'),
         nullable=True,
-        comment='Родительский каталог'
+        comment='Ссылка на родительский каталог (для иерархии)'
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime, default=datetime.now, server_default=func.now(),
+        comment='Дата и время создания записи'
     )
 
-    # Связи
     books: Mapped[List['Book']] = relationship(
-        'Book',
-        back_populates='catalog',
-        cascade='all, delete-orphan'
+        'Book', back_populates='catalog', cascade='all, delete-orphan'
     )
     parent: Mapped[Optional['Catalog']] = relationship(
-        'Catalog',
-        remote_side=[catalog_id],
-        back_populates='children'
+        'Catalog', remote_side=[catalog_id], back_populates='children'
     )
     children: Mapped[List['Catalog']] = relationship(
-        'Catalog',
-        back_populates='parent'
+        'Catalog', back_populates='parent'
     )
-
-    def __repr__(self) -> str:
-        return f'<Catalog {self.catalog_id}: {self.name}>'
 
 
 class Book(Model):
     """Книга (метаданные)"""
     __tablename__ = 'books'
+    __table_args__ = {'comment': 'Книги (основные метаданные)'}
 
-    book_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    title: Mapped[str] = mapped_column(String(500), nullable=False, comment='Название книги')
-    author: Mapped[str] = mapped_column(String(300), nullable=False, comment='Автор')
-    year: Mapped[Optional[int]] = mapped_column(Integer, comment='Год издания')
+    book_id: Mapped[int] = mapped_column(
+        Integer, primary_key=True, autoincrement=True,
+        comment='Уникальный идентификатор книги'
+    )
+    title: Mapped[str] = mapped_column(
+        String(500), nullable=False,
+        comment='Название книги'
+    )
+    author: Mapped[str] = mapped_column(
+        String(300), nullable=False,
+        comment='Автор книги'
+    )
+    year: Mapped[Optional[int]] = mapped_column(
+        Integer, comment='Год издания книги'
+    )
     catalog_id: Mapped[int] = mapped_column(
-        Integer,
-        ForeignKey('catalogs.catalog_id'),
-        nullable=False,
-        comment='Каталог'
+        Integer, ForeignKey('catalogs.catalog_id'), nullable=False,
+        comment='Ссылка на каталог, к которому относится книга'
     )
-    description: Mapped[Optional[str]] = mapped_column(Text, comment='Описание книги')
-    isbn: Mapped[Optional[str]] = mapped_column(String(13), unique=True, comment='ISBN')
+    description: Mapped[Optional[str]] = mapped_column(
+        Text, comment='Описание книги (аннотация)'
+    )
     created_at: Mapped[datetime] = mapped_column(
-        DateTime,
-        default=datetime.now,
-        server_default=func.now()
+        DateTime, default=datetime.now, server_default=func.now(),
+        comment='Дата и время создания записи'
     )
 
-    # Связи
     catalog: Mapped['Catalog'] = relationship('Catalog', back_populates='books')
     copies: Mapped[List['BookCopy']] = relationship(
-        'BookCopy',
-        back_populates='book',
-        cascade='all, delete-orphan'
+        'BookCopy', back_populates='book', cascade='all, delete-orphan'
     )
-    issues: Mapped[List['Issue']] = relationship('Issue', back_populates='book')
-
-    @validates('year')
-    def validate_year(self, key: str, year: Optional[int]) -> Optional[int]:
-        if year and (year < 0 or year > datetime.now().year + 1):
-            raise ValueError('Некорректный год издания')
-        return year
-
-    def __repr__(self) -> str:
-        return f'<Book {self.book_id}: {self.title}>'
 
 
 class BookCopy(Model):
-    """Экземпляр книги"""
+    """Физический экземпляр книги"""
     __tablename__ = 'book_copies'
+    __table_args__ = {'comment': 'Физические экземпляры книг'}
 
-    copy_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    copy_id: Mapped[int] = mapped_column(
+        Integer, primary_key=True, autoincrement=True,
+        comment='Уникальный идентификатор экземпляра книги'
+    )
     book_id: Mapped[int] = mapped_column(
-        Integer,
-        ForeignKey('books.book_id'),
-        nullable=False,
-        comment='Книга'
+        Integer, ForeignKey('books.book_id'), nullable=False,
+        comment='Ссылка на книгу, к которой относится экземпляр'
     )
     inventory_number: Mapped[str] = mapped_column(
-        String(50),
-        unique=True,
-        nullable=False,
-        comment='Инвентарный номер'
+        String(50), unique=True, nullable=False,
+        comment='Инвентарный номер экземпляра (уникальный)'
     )
-    status: Mapped[str] = mapped_column(
-        String(20),
-        default='available',
-        comment='Статус: available, issued, lost, repair'
-    )
-    barcode: Mapped[Optional[str]] = mapped_column(
-        String(100),
-        unique=True,
-        comment='Штрих-код'
-    )
-    acquired_date: Mapped[Optional[datetime]] = mapped_column(Date, comment='Дата поступления')
     created_at: Mapped[datetime] = mapped_column(
-        DateTime,
-        default=datetime.now,
-        server_default=func.now()
+        DateTime, default=datetime.now, server_default=func.now(),
+        comment='Дата и время создания записи'
     )
 
-    # Связи
     book: Mapped['Book'] = relationship('Book', back_populates='copies')
     issues: Mapped[List['Issue']] = relationship('Issue', back_populates='book_copy')
 
-    def __repr__(self) -> str:
-        return f'<BookCopy {self.copy_id}: {self.inventory_number}>'
-
 
 class Reader(Model):
-    """Читатель"""
+    """Читатель библиотеки"""
     __tablename__ = 'readers'
+    __table_args__ = {'comment': 'Читатели библиотеки'}
 
-    reader_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    reader_id: Mapped[int] = mapped_column(
+        Integer, primary_key=True, autoincrement=True,
+        comment='Уникальный идентификатор читателя'
+    )
     full_name: Mapped[str] = mapped_column(
-        String(200),
-        nullable=False,
-        comment='ФИО читателя'
+        String(200), nullable=False,
+        comment='Фамилия, имя и отчество читателя'
     )
-    address: Mapped[Optional[str]] = mapped_column(String(500), comment='Адрес')
-    phone: Mapped[Optional[str]] = mapped_column(String(20), comment='Телефон')
-    email: Mapped[Optional[str]] = mapped_column(String(100), unique=True, comment='Email')
-    passport_data: Mapped[Optional[str]] = mapped_column(String(100), comment='Паспортные данные')
-    registration_date: Mapped[datetime] = mapped_column(
-        Date,
-        default=datetime.now,
-        server_default=func.now()
+    address: Mapped[Optional[str]] = mapped_column(
+        String(500), comment='Адрес проживания читателя'
     )
-    is_active: Mapped[bool] = mapped_column(
-        Boolean,
-        default=True,
-        comment='Активен ли читатель'
+    phone: Mapped[Optional[str]] = mapped_column(
+        String(20), comment='Контактный телефон читателя'
+    )
+    email: Mapped[Optional[str]] = mapped_column(
+        String(100), comment='Электронная почта читателя'
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime, default=datetime.now, server_default=func.now(),
+        comment='Дата и время регистрации читателя'
     )
 
-    # Связи
     issues: Mapped[List['Issue']] = relationship('Issue', back_populates='reader')
-
-    @validates('email')
-    def validate_email(self, key: str, email: Optional[str]) -> Optional[str]:
-        if email and '@' not in email:
-            raise ValueError('Некорректный email')
-        return email
-
-    def __repr__(self) -> str:
-        return f'<Reader {self.reader_id}: {self.full_name}>'
 
 
 class Employee(Model):
     """Сотрудник библиотеки"""
     __tablename__ = 'employees'
+    __table_args__ = {'comment': 'Сотрудники библиотеки'}
 
-    employee_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    employee_id: Mapped[int] = mapped_column(
+        Integer, primary_key=True, autoincrement=True,
+        comment='Уникальный идентификатор сотрудника'
+    )
     full_name: Mapped[str] = mapped_column(
-        String(200),
-        nullable=False,
-        comment='ФИО сотрудника'
+        String(200), nullable=False,
+        comment='Фамилия, имя и отчество сотрудника'
     )
-    position: Mapped[str] = mapped_column(String(100), nullable=False, comment='Должность')
-    phone: Mapped[Optional[str]] = mapped_column(String(20), comment='Телефон')
-    email: Mapped[str] = mapped_column(String(100), unique=True, comment='Email')
-    hire_date: Mapped[datetime] = mapped_column(
-        Date,
-        default=datetime.now,
-        comment='Дата приема на работу'
+    position: Mapped[str] = mapped_column(
+        String(100), nullable=False,
+        comment='Должность сотрудника'
     )
-    is_active: Mapped[bool] = mapped_column(
-        Boolean,
-        default=True,
-        comment='Активен ли сотрудник'
+    phone: Mapped[Optional[str]] = mapped_column(
+        String(20), comment='Контактный телефон сотрудника'
     )
-    username: Mapped[str] = mapped_column(String(50), unique=True, comment='Логин для входа')
-    password_hash: Mapped[Optional[str]] = mapped_column(String(200), comment='Хеш пароля')
-    role: Mapped[str] = mapped_column(
-        String(20),
-        default='librarian',
-        comment='Роль: admin, librarian'
+    email: Mapped[Optional[str]] = mapped_column(
+        String(100), comment='Электронная почта сотрудника'
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime, default=datetime.now, server_default=func.now(),
+        comment='Дата и время приема сотрудника на работу'
     )
 
-    # Связи
     issued_issues: Mapped[List['Issue']] = relationship(
-        'Issue',
-        foreign_keys='Issue.employee_issued_id',
-        back_populates='issued_by'
+        'Issue', foreign_keys='Issue.employee_issued_id', back_populates='issued_by'
     )
     received_issues: Mapped[List['Issue']] = relationship(
-        'Issue',
-        foreign_keys='Issue.employee_received_id',
-        back_populates='received_by'
+        'Issue', foreign_keys='Issue.employee_received_id', back_populates='received_by'
     )
-
-    @validates('role')
-    def validate_role(self, key: str, role: str) -> str:
-        valid_roles = ['admin', 'librarian']
-        if role not in valid_roles:
-            raise ValueError(f'Роль должна быть одной из: {valid_roles}')
-        return role
-
-    def __repr__(self) -> str:
-        return f'<Employee {self.employee_id}: {self.full_name}>'
 
 
 class Issue(Model):
-    """Выдача книги"""
+    """Выдача книги читателю"""
     __tablename__ = 'issues'
+    __table_args__ = {'comment': 'Выдачи книг читателям'}
 
-    issue_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    issue_id: Mapped[int] = mapped_column(
+        Integer, primary_key=True, autoincrement=True,
+        comment='Уникальный идентификатор выдачи'
+    )
     copy_id: Mapped[int] = mapped_column(
-        Integer,
-        ForeignKey('book_copies.copy_id'),
-        nullable=False,
-        comment='Экземпляр книги'
+        Integer, ForeignKey('book_copies.copy_id'), nullable=False,
+        comment='Ссылка на экземпляр книги, который выдается'
     )
     reader_id: Mapped[int] = mapped_column(
-        Integer,
-        ForeignKey('readers.reader_id'),
-        nullable=False,
-        comment='Читатель'
+        Integer, ForeignKey('readers.reader_id'), nullable=False,
+        comment='Ссылка на читателя, которому выдается книга'
     )
     employee_issued_id: Mapped[int] = mapped_column(
-        Integer,
-        ForeignKey('employees.employee_id'),
-        nullable=False,
-        comment='Сотрудник, выдавший книгу'
+        Integer, ForeignKey('employees.employee_id'), nullable=False,
+        comment='Ссылка на сотрудника, который оформил выдачу'
     )
     employee_received_id: Mapped[Optional[int]] = mapped_column(
-        Integer,
-        ForeignKey('employees.employee_id'),
-        nullable=True,
-        comment='Сотрудник, принявший книгу'
-    )
-    book_id: Mapped[int] = mapped_column(
-        Integer,
-        ForeignKey('books.book_id'),
-        nullable=False,
-        comment='Книга (для удобства)'
+        Integer, ForeignKey('employees.employee_id'), nullable=True,
+        comment='Ссылка на сотрудника, который принял книгу обратно'
     )
     issue_date: Mapped[datetime] = mapped_column(
-        Date,
-        default=datetime.now,
-        nullable=False,
-        comment='Дата выдачи'
+        DateTime, default=datetime.now, nullable=False,
+        comment='Дата и время выдачи книги'
     )
-    due_date: Mapped[datetime] = mapped_column(Date, nullable=False, comment='Срок возврата')
+    due_date: Mapped[datetime] = mapped_column(
+        DateTime, nullable=False,
+        comment='Дата, до которой книга должна быть возвращена'
+    )
     return_date: Mapped[Optional[datetime]] = mapped_column(
-        Date,
-        nullable=True,
-        comment='Дата фактического возврата'
+        DateTime, nullable=True,
+        comment='Фактическая дата возврата книги'
     )
-    is_returned: Mapped[bool] = mapped_column(
-        Boolean,
-        default=False,
-        comment='Возвращена ли книга'
+    copies_count: Mapped[int] = mapped_column(
+        Integer, default=1, nullable=False,
+        comment='Количество выданных экземпляров (по умолчанию 1)'
     )
-    is_extended: Mapped[bool] = mapped_column(
-        Boolean,
-        default=False,
-        comment='Продлена ли книга'
-    )
-    notes: Mapped[Optional[str]] = mapped_column(Text, comment='Примечания')
     created_at: Mapped[datetime] = mapped_column(
-        DateTime,
-        default=datetime.now,
-        server_default=func.now()
+        DateTime, default=datetime.now, server_default=func.now(),
+        comment='Дата и время создания записи'
     )
 
-    # Связи
     book_copy: Mapped['BookCopy'] = relationship('BookCopy', back_populates='issues')
     reader: Mapped['Reader'] = relationship('Reader', back_populates='issues')
     issued_by: Mapped['Employee'] = relationship(
-        'Employee',
-        foreign_keys=[employee_issued_id],
-        back_populates='issued_issues'
+        'Employee', foreign_keys=[employee_issued_id], back_populates='issued_issues'
     )
     received_by: Mapped[Optional['Employee']] = relationship(
-        'Employee',
-        foreign_keys=[employee_received_id],
-        back_populates='received_issues'
+        'Employee', foreign_keys=[employee_received_id], back_populates='received_issues'
     )
-    book: Mapped['Book'] = relationship('Book', back_populates='issues')
-
-    @validates('due_date')
-    def validate_due_date(self, key: str, due_date: datetime) -> datetime:
-        if due_date and self.issue_date and due_date < self.issue_date:
-            raise ValueError('Срок возврата не может быть раньше даты выдачи')
-        return due_date
-
-    def __repr__(self) -> str:
-        return f'<Issue {self.issue_id}: Book {self.book_id} to Reader {self.reader_id}>'
