@@ -1,0 +1,827 @@
+<!-- templates/dashboard.html -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Библиотечная система</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-light: #dbeafe;
+            --secondary: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --gray: #94a3b8;
+            --border: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background: #f8fafc;
+            color: #334155;
+            line-height: 1.5;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: white;
+            border-right: 1px solid var(--border);
+            padding: 2rem 0;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .logo {
+            padding: 0 1.5rem 2rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo h1 {
+            font-size: 1.5rem;
+            color: var(--primary);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            background: var(--primary);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .nav-section {
+            padding: 0 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .nav-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.75rem;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: var(--secondary);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .nav-link.active {
+            background: var(--primary-light);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .nav-icon {
+            font-size: 1.25rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        .nav-badge {
+            margin-left: auto;
+            background: var(--primary);
+            color: white;
+            font-size: 0.75rem;
+            padding: 0.125rem 0.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        /* Header */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .page-title h2 {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .page-description {
+            color: var(--gray);
+            font-size: 1rem;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .user-info {
+            text-align: right;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .user-role {
+            font-size: 0.875rem;
+            color: var(--gray);
+        }
+
+        .user-avatar {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary), #3b82f6);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1.25rem;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .stat-card:nth-child(1) .stat-icon {
+            background: #e0f2fe;
+            color: #0369a1;
+        }
+
+        .stat-card:nth-child(2) .stat-icon {
+            background: #f0f9ff;
+            color: #0ea5e9;
+        }
+
+        .stat-card:nth-child(3) .stat-icon {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .stat-card:nth-child(4) .stat-icon {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .stat-trend {
+            font-size: 0.875rem;
+            font-weight: 600;
+            padding: 0.25rem 0.5rem;
+            border-radius: 20px;
+        }
+
+        .trend-up {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .trend-down {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .stat-value {
+            font-size: 2.25rem;
+            font-weight: 800;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--gray);
+            font-size: 0.9375rem;
+        }
+
+        .stat-subtitle {
+            font-size: 0.875rem;
+            color: var(--gray);
+            margin-top: 0.5rem;
+        }
+
+        /* Table Section */
+        .table-section {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .table-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-header h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .btn {
+            padding: 0.625rem 1.25rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9375rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary-light);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #f8fafc;
+        }
+
+        th {
+            padding: 1rem 1.5rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--dark);
+        }
+
+        tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.375rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-returned {
+            background: #eff6ff;
+            color: #1e40af;
+        }
+
+        .status-overdue {
+            background: #fef2f2;
+            color: #991b1b;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .status-active .status-dot {
+            background: #166534;
+        }
+
+        .status-returned .status-dot {
+            background: #1e40af;
+        }
+
+        .status-overdue .status-dot {
+            background: #991b1b;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .action-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            text-align: center;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .action-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .action-icon {
+            width: 56px;
+            height: 56px;
+            background: var(--primary-light);
+            color: var(--primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin: 0 auto 1rem;
+        }
+
+        .action-title {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .action-description {
+            color: var(--gray);
+            font-size: 0.875rem;
+        }
+
+        /* DB Info */
+        .db-info {
+            margin-top: 3rem;
+            padding: 1.5rem;
+            background: white;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            font-family: 'SF Mono', monospace;
+            font-size: 0.875rem;
+        }
+
+        .db-title {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .db-entities {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .db-entity {
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .user-menu {
+                align-self: flex-end;
+            }
+
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <h1>
+                    <span class="logo-icon">📚</span>
+                    Библиотека
+                </h1>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">Управление</div>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="/" class="nav-link active">
+                            <span class="nav-icon">📊</span>
+                            <span>Дашборд</span>
+                            <span class="nav-badge">Главная</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <span class="nav-icon">📕</span>
+                            <span>Книги</span>
+                            <span class="nav-badge">1,250</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <span class="nav-icon">👥</span>
+                            <span>Читатели</span>
+                            <span class="nav-badge">320</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <span class="nav-icon">📋</span>
+                            <span>Выдачи</span>
+                            <span class="nav-badge">45</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">Каталогизация</div>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <span class="nav-icon">🗂️</span>
+                            <span>Каталоги</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <span class="nav-icon">📦</span>
+                            <span>Экземпляры</span>
+                            <span class="nav-badge">3,750</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">Администрирование</div>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <span class="nav-icon">👔</span>
+                            <span>Сотрудники</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <span class="nav-icon">⚙️</span>
+                            <span>Настройки</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="page-header">
+                <div class="page-title">
+                    <h2>Библиотечная система</h2>
+                    <p class="page-description">Управление книгами, читателями и выдачами</p>
+                </div>
+
+                <div class="user-menu">
+                    <div class="user-info">
+                        <div class="user-name">Иванова А.П.</div>
+                        <div class="user-role">Библиотекарь</div>
+                    </div>
+                    <div class="user-avatar">АИ</div>
+                </div>
+            </header>
+
+            <!-- Statistics -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">📚</div>
+                        <div class="stat-trend trend-up">+12%</div>
+                    </div>
+                    <div class="stat-value">1,250</div>
+                    <div class="stat-label">Всего книг в каталоге</div>
+                    <div class="stat-subtitle">+150 за месяц</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">📦</div>
+                        <div class="stat-trend trend-up">+8%</div>
+                    </div>
+                    <div class="stat-value">3,750</div>
+                    <div class="stat-label">Физических экземпляров</div>
+                    <div class="stat-subtitle">В наличии: 3,705</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-trend trend-up">+5%</div>
+                    </div>
+                    <div class="stat-value">320</div>
+                    <div class="stat-label">Активных читателей</div>
+                    <div class="stat-subtitle">+15 новых за месяц</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">📋</div>
+                        <div class="stat-trend trend-down">-3%</div>
+                    </div>
+                    <div class="stat-value">45</div>
+                    <div class="stat-label">Книг на руках</div>
+                    <div class="stat-subtitle">Из них просрочено: 5</div>
+                </div>
+            </div>
+
+            <!-- Recent Loans Table -->
+            <section class="table-section">
+                <div class="table-header">
+                    <h3>Последние выдачи</h3>
+                    <div class="table-actions">
+                        <button class="btn btn-secondary">
+                            <span>📊</span> Экспорт
+                        </button>
+                        <button class="btn btn-primary">
+                            <span>➕</span> Новая выдача
+                        </button>
+                    </div>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Читатель</th>
+                            <th>Книга</th>
+                            <th>Экземпляр</th>
+                            <th>Дата выдачи</th>
+                            <th>Срок возврата</th>
+                            <th>Статус</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Иванов Иван Иванович</strong></td>
+                            <td>Мастер и Маргарита</td>
+                            <td>ИНВ-2024-00125</td>
+                            <td>15.03.2024</td>
+                            <td>15.04.2024</td>
+                            <td>
+                                <span class="status status-active">
+                                    <span class="status-dot"></span>
+                                    На руках
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Петрова Анна Сергеевна</strong></td>
+                            <td>1984</td>
+                            <td>ИНВ-2023-04567</td>
+                            <td>14.03.2024</td>
+                            <td>14.04.2024</td>
+                            <td>
+                                <span class="status status-returned">
+                                    <span class="status-dot"></span>
+                                    Возвращена
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Сидоров Петр Константинович</strong></td>
+                            <td>Война и мир. Том 1</td>
+                            <td>ИНВ-2022-07891</td>
+                            <td>10.03.2024</td>
+                            <td>10.04.2024</td>
+                            <td>
+                                <span class="status status-overdue">
+                                    <span class="status-dot"></span>
+                                    Просрочена
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Кузнецова Мария Владимировна</strong></td>
+                            <td>Преступление и наказание</td>
+                            <td>ИНВ-2024-00345</td>
+                            <td>12.03.2024</td>
+                            <td>12.04.2024</td>
+                            <td>
+                                <span class="status status-active">
+                                    <span class="status-dot"></span>
+                                    На руках
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Васильев Дмитрий Алексеевич</strong></td>
+                            <td>Анна Каренина</td>
+                            <td>ИНВ-2023-05678</td>
+                            <td>18.03.2024</td>
+                            <td>18.04.2024</td>
+                            <td>
+                                <span class="status status-active">
+                                    <span class="status-dot"></span>
+                                    На руках
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <div class="action-card">
+                    <div class="action-icon">➕</div>
+                    <div class="action-title">Добавить книгу</div>
+                    <div class="action-description">Новая книга в каталог</div>
+                </div>
+                <div class="action-card">
+                    <div class="action-icon">👤</div>
+                    <div class="action-title">Новый читатель</div>
+                    <div class="action-description">Зарегистрировать читателя</div>
+                </div>
+                <div class="action-card">
+                    <div class="action-icon">📝</div>
+                    <div class="action-title">Оформить выдачу</div>
+                    <div class="action-description">Выдать книгу читателю</div>
+                </div>
+                <div class="action-card">
+                    <div class="action-icon">📊</div>
+                    <div class="action-title">Отчеты</div>
+                    <div class="action-description">Статистика и аналитика</div>
+                </div>
+            </div>
+
+            <!-- Database Info -->
+            <div class="db-info">
+                <div class="db-title">
+                    <span>📋</span> Структура базы данных (ER-диаграмма)
+                </div>
+                <div class="db-entities">
+                    <span class="db-entity">КНИГИ</span>
+                    <span class="db-entity">КАТАЛОГИ</span>
+                    <span class="db-entity">ЧИТАТЕЛИ</span>
+                    <span class="db-entity">СОТРУДНИКИ</span>
+                    <span class="db-entity">ЭКЗЕМПЛЯРЫ</span>
+                    <span class="db-entity">ВЫДАЧИ</span>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
+

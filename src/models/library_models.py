@@ -213,10 +213,10 @@ class Issue(Model):
         DateTime, nullable=True,
         comment='Фактическая дата возврата книги'
     )
-    copies_count: Mapped[int] = mapped_column(
-        Integer, default=1, nullable=False,
-        comment='Количество выданных экземпляров (по умолчанию 1)'
-    )
+    # copies_count: Mapped[int] = mapped_column(
+    #     Integer, default=1, nullable=False,
+    #     comment='Количество выданных экземпляров (по умолчанию 1)'
+    # )
     created_at: Mapped[datetime] = mapped_column(
         DateTime, default=datetime.now, server_default=func.now(),
         comment='Дата и время создания записи'

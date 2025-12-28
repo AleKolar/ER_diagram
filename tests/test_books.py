@@ -46,3 +46,4 @@ async def test_create_book(db_session: AsyncSession):
     book = await db_session.get(Book, new_book.id)
     assert book is not None
     assert book.title == "Test Book"
+

@@ -33,8 +33,13 @@ class CatalogBase(BaseSchema):
     )
 
 
-class CatalogCreate(CatalogBase):
-    pass
+class CatalogCreate(BaseModel):
+    name: str
+    description: Optional[str] = None
+    parent_id: Optional[int] = None
+
+    class Config:
+        from_attributes = True
 
 
 class CatalogUpdate(BaseSchema):
@@ -157,6 +162,9 @@ class Book(BookBase):
         None,
         description="Каталог, к которому относится книга"
     )
+
+    class Config:
+        from_attributes = True
 
 
 # Схемы для Экземпляра книги
@@ -381,11 +389,11 @@ class IssueUpdate(BaseSchema):
         None,
         description="Фактическая дата возврата книги"
     )
-    copies_count: Optional[int] = Field(
-        None,
-        ge=1,
-        description="Количество выданных экземпляров"
-    )
+    # copies_count: Optional[int] = Field(
+    #     None,
+    #     ge=1,
+    #     description="Количество выданных экземпляров"
+    # )
 
 
 class IssueReturn(BaseSchema):
@@ -598,3 +606,4 @@ BookCopy.model_rebuild()
 Reader.model_rebuild()
 Employee.model_rebuild()
 Issue.model_rebuild()
+

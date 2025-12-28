@@ -1,75 +1,40 @@
-from fastapi import FastAPI
-
-from src.models.library_models import Book, Reader, Employee, Issue
-
-# app = FastAPI()
-#
-#
-# @app.get("/")
-# async def root():
-#     return {"message": "Hello World"}
-#
-#
-# @app.get("/hello/{name}")
-# async def say_hello(name: str):
-#     return {"message": f"Hello {name}"}
-
-
 """
 Основное приложение FastAPI для библиотечной системы
 """
-from fastapi import FastAPI, Depends, HTTPException
+
+import logging
+from datetime import datetime
+
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy.ext.asyncio import AsyncSession
 from contextlib import asynccontextmanager
 
-from src.database.er_db import get_db, create_tables
+from starlette.responses import HTMLResponse
+from starlette.templating import Jinja2Templates
 
-app = FastAPI(
-    title="Библиотечная система API",
-    version="1.0.0",
-    description="API для управления библиотекой"
-)
+from src.endpoints.books import books, books_router
 
-# CORS
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
-# Регистрация роутеров
-# app.include_router(auth.router, prefix="/auth", tags=["Аутентификация"])
-# app.include_router(books.router, prefix="/books", tags=["Книги"])
-# app.include_router(readers.router, prefix="/readers", tags=["Читатели"])
-# app.include_router(employees.router, prefix="/employees", tags=["Сотрудники"])
-# app.include_router(issues.router, prefix="/issues", tags=["Выдачи"])
-# app.include_router(catalogs.router, prefix="/catalogs", tags=["Каталоги"])
-
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Жизненный цикл приложения"""
-    print("🚀 Запуск приложения...")
-    # Создаем таблицы
-    try:
-        await create_tables()
-    except Exception as e:
-        print(f"⚠️ Ошибка создания таблиц: {e}")
-        raise
-
+    logger.info("🚀 Запуск приложения...")
     yield
+    logger.info("👋 Остановка приложения...")
 
-    print("👋 Остановка приложения...")
 
 app = FastAPI(
-    title="Library API",
-    description="API библиотеки",
+    title="Библиотечная система",
     version="1.0.0",
-    lifespan=lifespan
+    lifespan=lifespan,
+    docs_url="/docs",
+    redoc_url="/redoc",
+    openapi_url="/openapi.json"
 )
+
+app.include_router(books_router)
 
 # Настройка CORS
 app.add_middleware(
@@ -80,9 +45,28 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+templates = Jinja2Templates(directory="src/templates")
+
 @app.get("/", tags=["Главная"])
 async def root():
     return {"message": "Добро пожаловать в библиотечную систему API"}
+
+
+@app.get("/dashboard", response_class=HTMLResponse)
+async def dashboard(request: Request):
+    """
+    Главная страница библиотечной системы
+    Возвращает HTML шаблон с примерными данными для демонстрации
+    """
+    # Данные для демонстрации (примерные)
+    context = {
+        "request": request,
+        "current_year": datetime.now().year
+    }
+
+    return templates.TemplateResponse("dashboard.html", context)
+
+
 
 
 # @app.get("/statistics", response_model=Statistics, tags=["Статистика"])
@@ -115,7 +99,20 @@ async def root():
 #     }
 
 
-if __name__ == "__main__":
-    import uvicorn
 
-    uvicorn.run("src.main:app", host="0.0.0.0", port=8000, reload=True)
+print("🔍 Зарегистрированные пути:")
+for route in app.routes:
+    if hasattr(route, 'path'):
+        methods = getattr(route, 'methods', ['?'])
+        print(f"  {methods} {route.path}")
+
+# if __name__ == "__main__":
+#     import uvicorn
+#
+#     uvicorn.run("src.main:app", host="0.0.0.0", port=8000, reload=True)
+
+# uvicorn main:app --reload --port 8001
+# uvicorn main:app --reload --port 8000
+
+# sqlalchemy.url = postgresql+asyncpg://postgres:password@localhost:5432/er_db
+
