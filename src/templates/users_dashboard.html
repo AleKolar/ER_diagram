@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Библиотека - Поиск книг</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-light: #e0e7ff;
+            --secondary: #6c757d;
+            --success: #06d6a0;
+            --warning: #ffd166;
+            --danger: #ef476f;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #adb5bd;
+            --border: #dee2e6;
+            --card-bg: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: var(--dark);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Header */
+        .user-header {
+            max-width: 1400px;
+            margin: 0 auto 40px;
+            background: white;
+            border-radius: 20px;
+            padding: 25px 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary), #764ba2);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: white;
+        }
+
+        .logo-text h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 5px;
+        }
+
+        .logo-text p {
+            color: var(--secondary);
+            font-size: 16px;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            border-radius: 14px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #3a56d4;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(67, 97, 238, 0.3);
+        }
+
+        .btn-outline {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary-light);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #05c090;
+        }
+
+        /* Search Section */
+        .search-section {
+            max-width: 1400px;
+            margin: 0 auto 40px;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .search-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .search-form {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 16px;
+        }
+
+        .form-control {
+            padding: 16px 20px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+        }
+
+        .search-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .btn-lg {
+            padding: 16px 40px;
+            font-size: 17px;
+        }
+
+        /* Books Grid */
+        .books-section {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 26px;
+            font-weight: 700;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .results-count {
+            color: white;
+            font-size: 16px;
+            background: rgba(255,255,255,0.1);
+            padding: 8px 20px;
+            border-radius: 20px;
+        }
+
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .book-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .book-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .book-image {
+            height: 220px;
+            background: linear-gradient(135deg, var(--primary-light), #e0e7ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 80px;
+            color: var(--primary);
+            padding: 30px;
+        }
+
+        .book-content {
+            padding: 30px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .book-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 10px;
+            line-height: 1.3;
+        }
+
+        .book-author {
+            color: var(--primary);
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .book-meta {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .book-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--secondary);
+            font-size: 14px;
+            background: var(--light);
+            padding: 6px 12px;
+            border-radius: 10px;
+        }
+
+        .book-description {
+            color: var(--secondary);
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            flex: 1;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .book-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+        }
+
+        .availability {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .available {
+            color: var(--success);
+        }
+
+        .unavailable {
+            color: var(--danger);
+        }
+
+        .availability-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .available .availability-dot {
+            background: var(--success);
+        }
+
+        .unavailable .availability-dot {
+            background: var(--danger);
+        }
+
+        /* Categories */
+        .categories-section {
+            max-width: 1400px;
+            margin: 0 auto 50px;
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .category-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .category-card:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-5px);
+        }
+
+        .category-icon {
+            font-size: 32px;
+            margin-bottom: 15px;
+            color: white;
+        }
+
+        .category-name {
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .category-count {
+            color: rgba(255,255,255,0.8);
+            font-size: 14px;
+        }
+
+        /* Footer */
+        .user-footer {
+            max-width: 1400px;
+            margin: 40px auto 0;
+            padding: 30px;
+            background: white;
+            border-radius: 20px;
+            text-align: center;
+            color: var(--secondary);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .footer-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .footer-link:hover {
+            color: #3a56d4;
+            text-decoration: underline;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 500px;
+            padding: 40px;
+            position: relative;
+            animation: modalSlide 0.3s ease;
+        }
+
+        @keyframes modalSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--secondary);
+        }
+
+        .modal-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .modal-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .search-form {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .books-grid {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .user-header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .search-form {
+                grid-template-columns: 1fr;
+            }
+
+            .books-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section-header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .auth-buttons {
+                width: 100%;
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 40px;
+            background: white;
+            border-radius: 20px;
+            grid-column: 1 / -1;
+        }
+
+        .empty-icon {
+            font-size: 64px;
+            color: var(--gray);
+            margin-bottom: 20px;
+        }
+
+        .empty-text {
+            color: var(--secondary);
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="user-header">
+        <div class="logo-section">
+            <div class="logo">📚</div>
+            <div class="logo-text">
+                <h1>Библиотека Онлайн</h1>
+                <p>Найдите свою следующую любимую книгу</p>
+            </div>
+        </div>
+
+        <div class="auth-buttons">
+            <button class="btn btn-primary" onclick="openModal('loginModal')">
+                <i class="fas fa-sign-in-alt"></i>
+                Войти в аккаунт
+            </button>
+            <button class="btn btn-outline" onclick="openModal('registerModal')">
+                <i class="fas fa-user-plus"></i>
+                Регистрация
+            </button>
+        </div>
+    </header>
+
+    <!-- Search Section -->
+    <section class="search-section">
+        <h2 class="search-title">
+            <i class="fas fa-search"></i>
+            Поиск книг в библиотеке
+        </h2>
+
+        <div class="search-form">
+            <div class="form-group">
+                <label for="searchTitle"><i class="fas fa-book"></i> Название книги</label>
+                <input type="text" id="searchTitle" class="form-control" placeholder="Введите название книги...">
+            </div>
+
+            <div class="form-group">
+                <label for="searchAuthor"><i class="fas fa-user-edit"></i> Автор</label>
+                <input type="text" id="searchAuthor" class="form-control" placeholder="Введите имя автора...">
+            </div>
+
+            <div class="form-group">
+                <label for="searchCategory"><i class="fas fa-tags"></i> Категория</label>
+                <select id="searchCategory" class="form-control">
+                    <option value="">Все категории</option>
+                    <option value="fiction">Художественная литература</option>
+                    <option value="science">Научная литература</option>
+                    <option value="history">История</option>
+                    <option value="technology">Технологии</option>
+                    <option value="art">Искусство</option>
+                    <option value="children">Детская литература</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="searchYear"><i class="fas fa-calendar-alt"></i> Год издания</label>
+                <input type="number" id="searchYear" class="form-control" placeholder="Год (например, 2020)" min="1900" max="2024">
+            </div>
+
+            <div class="form-group">
+                <label for="searchAvailability"><i class="fas fa-check-circle"></i> Доступность</label>
+                <select id="searchAvailability" class="form-control">
+                    <option value="">Все книги</option>
+                    <option value="available">Только доступные</option>
+                    <option value="unavailable">Нет в наличии</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="searchSort"><i class="fas fa-sort"></i> Сортировка</label>
+                <select id="searchSort" class="form-control">
+                    <option value="relevance">По релевантности</option>
+                    <option value="title">По названию</option>
+                    <option value="year">По году (новые)</option>
+                    <option value="popular">Популярные</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="search-actions">
+            <button class="btn btn-primary btn-lg" onclick="performSearch()">
+                <i class="fas fa-search"></i>
+                Найти книги
+            </button>
+            <button class="btn btn-outline btn-lg" onclick="clearSearch()">
+                <i class="fas fa-eraser"></i>
+                Очистить фильтры
+            </button>
+        </div>
+    </section>
+
+    <!-- Books Section -->
+    <section class="books-section">
+        <div class="section-header">
+            <h2 class="section-title">
+                <i class="fas fa-book-open"></i>
+                Найденные книги
+            </h2>
+            <div class="results-count">
+                Показано <span id="resultsCount">8</span> из 1250 книг
+            </div>
+        </div>
+
+        <div class="books-grid" id="booksGrid">
+            <!-- Book cards will be populated here -->
+            <div class="book-card">
+                <div class="book-image">
+                    📖
+                </div>
+                <div class="book-content">
+                    <h3 class="book-title">Мастер и Маргарита</h3>
+                    <div class="book-author">
+                        <i class="fas fa-user-edit"></i>
+                        Михаил Булгаков
+                    </div>
+                    <div class="book-meta">
+                        <span class="book-meta-item">
+                            <i class="fas fa-calendar"></i> 1967
+                        </span>
+                        <span class="book-meta-item">
+                            <i class="fas fa-tag"></i> Классика
+                        </span>
+                        <span class="book-meta-item">
+                            <i class="fas fa-copy"></i> 5 экз.
+                        </span>
+                    </div>
+                    <p class="book-description">
+                        Философский роман о добре и зле, любви и предательстве. Одно из величайших произведений русской литературы XX века.
+                    </p>
+                    <div class="book-status">
+                        <div class="availability available">
+                            <span class="availability-dot"></span>
+                            Доступна (3 из 5)
+                        </div>
+                        <button class="btn btn-success" onclick="showBorrowModal()">
+                            <i class="fas fa-bookmark"></i>
+                            Взять
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="book-card">
+                <div class="book-image">
+                    📕
+                </div>
+                <div class="book-content">
+                    <h3 class="book-title">1984</h3>
+                    <div class="book-author">
+                        <i class="fas fa-user-edit"></i>
+                        Джордж Оруэлл
+                    </div>
+                    <div class="book-meta">
+                        <span class="book-meta-item">
+                            <i class="fas fa-calendar"></i> 1949
+                        </span>
+                        <span class="book-meta-item">
+                            <i class="fas fa-tag"></i> Антиутопия
+                        </span>
+                        <span class="book-meta-item">
+                            <i class="fas fa-copy"></i> 2 экз.
+                        </span>
+                    </div>
+                    <p class="book-description">
+                        Роман-антиутопия, описывающий тоталитарное общество под постоянным контролем "Большого Брата".
+                    </p>
+                    <div class="book-status">
+                        <div class="availability unavailable">
+                            <span class="availability-dot"></span>
+                            Нет в наличии
+                        </div>
+                        <button class="btn btn-outline" onclick="showReservationModal()">
+                            <i class="fas fa-bell"></i>
+                            Уведомить
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="book-card">
+                <div class="book-image">
+                    📘
+                </div>
+                <div class="book-content">
+                    <h3 class="book-title">Искусство программирования</h3>
+                    <div class="book-author">
+                        <i class="fas fa-user-edit"></i>
+                        Дональд Кнут
+                    </div>
+                    <div class="book-meta">
+                        <span class="book-meta-item">
+                            <i class="fas fa-calendar"></i> 1968
+                        </span>
+                        <span class="book-meta-item">
+                            <i class="fas fa-tag"></i> Программирование
+                        </span>
+                        <span class="book-meta-item">
+                            <i class="fas fa-copy"></i> 4 экз.
+                        </span>
+                    </div>
+                    <p class="book-description">
+                        Фундаментальный труд по алгоритмам и структурам данных. Обязательное чтение для каждого программиста.
+                    </p>
+                    <div class="book-status">
+                        <div class="availability available">
+                            <span class="availability-dot"></span>
+                            Доступна (4 из 4)
+                        </div>
+                        <button class="btn btn-success" onclick="showBorrowModal()">
+                            <i class="fas fa-bookmark"></i>
+                            Взять
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="book-card">
+                <div class="book-image">
+                    📗
+                </div>
+                <div class="book-content">
+                    <h3 class="book-title">Гарри Поттер и философский камень</h3>
+                    <div class="book-author">
+                        <i class="fas fa-user-edit"></i>
+                        Джоан Роулинг
+                    </div>
+                    <div class="book-meta">
+                        <span class="book-meta-item">
+                            <i class="fas fa-calendar"></i> 1997
+                        </span>
+                        <span class="book-meta-item">
+                            <i class="fas fa-tag"></i> Фэнтези
+                        </span>
+                        <span class="book-meta-item">
+                            <i class="fas fa-copy"></i> 8 экз.
+                        </span>
+                    </div>
+                    <p class="book-description">
+                        Первая книга культовой серии о юном волшебнике Гарри Поттере и его приключениях в школе Хогвартс.
+                    </p>
+                    <div class="book-status">
+                        <div class="availability available">
+                            <span class="availability-dot"></span>
+                            Доступна (2 из 8)
+                        </div>
+                        <button class="btn btn-success" onclick="showBorrowModal()">
+                            <i class="fas fa-bookmark"></i>
+                            Взять
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section class="categories-section">
+        <div class="section-header">
+            <h2 class="section-title">
+                <i class="fas fa-tags"></i>
+                Категории книг
+            </h2>
+        </div>
+
+        <div class="categories-grid">
+            <div class="category-card" onclick="filterByCategory('fiction')">
+                <div class="category-icon">📚</div>
+                <div class="category-name">Художественная литература</div>
+                <div class="category-count">450 книг</div>
+            </div>
+
+            <div class="category-card" onclick="filterByCategory('science')">
+                <div class="category-icon">🔬</div>
+                <div class="category-name">Научная литература</div>
+                <div class="category-count">320 книг</div>
+            </div>
+
+            <div class="category-card" onclick="filterByCategory('history')">
+                <div class="category-icon">🏛️</div>
+                <div class="category-name">История</div>
+                <div class="category-count">280 книг</div>
+            </div>
+
+            <div class="category-card" onclick="filterByCategory('technology')">
+                <div class="category-icon">💻</div>
+                <div class="category-name">Технологии</div>
+                <div class="category-count">180 книг</div>
+            </div>
+
+            <div class="category-card" onclick="filterByCategory('art')">
+                <div class="category-icon">🎨</div>
+                <div class="category-name">Искусство</div>
+                <div class="category-count">120 книг</div>
+            </div>
+
+            <div class="category-card" onclick="filterByCategory('children')">
+                <div class="category-icon">🧸</div>
+                <div class="category-name">Детская литература</div>
+                <div class="category-count">300 книг</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="user-footer">
+        <div class="footer-links">
+            <a href="#" class="footer-link">О библиотеке</a>
+            <a href="#" class="footer-link">Правила пользования</a>
+            <a href="#" class="footer-link">Контакты</a>
+            <a href="#" class="footer-link">Расписание работы</a>
+            <a href="#" class="footer-link">Новости</a>
+        </div>
+        <p>© 2024 Библиотека Онлайн. Все права защищены.</p>
+        <p>Для получения читательского билета обратитесь к сотруднику библиотеки</p>
+    </footer>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('loginModal')">&times;</button>
+            <h2 class="modal-title">Вход в аккаунт</h2>
+            <form class="modal-form">
+                <div class="form-group">
+                    <label for="loginEmail">Электронная почта</label>
+                    <input type="email" id="loginEmail" class="form-control" placeholder="ваш@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Пароль</label>
+                    <input type="password" id="loginPassword" class="form-control" placeholder="Введите пароль" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Войти</button>
+                <p style="text-align: center; margin-top: 15px; color: var(--secondary);">
+                    Нет аккаунта? <a href="#" onclick="switchToRegister()" style="color: var(--primary);">Зарегистрироваться</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('registerModal')">&times;</button>
+            <h2 class="modal-title">Регистрация</h2>
+            <form class="modal-form">
+                <div class="form-group">
+                    <label for="regFullName">ФИО</label>
+                    <input type="text" id="regFullName" class="form-control" placeholder="Иванов Иван Иванович" required>
+                </div>
+                <div class="form-group">
+                    <label for="regEmail">Электронная почта</label>
+                    <input type="email" id="regEmail" class="form-control" placeholder="ваш@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="regPhone">Телефон</label>
+                    <input type="tel" id="regPhone" class="form-control" placeholder="+7 (XXX) XXX-XX-XX" required>
+                </div>
+                <div class="form-group">
+                    <label for="regAddress">Адрес</label>
+                    <input type="text" id="regAddress" class="form-control" placeholder="Город, улица, дом, квартира">
+                </div>
+                <div class="form-group">
+                    <label for="regPassword">Пароль</label>
+                    <input type="password" id="regPassword" class="form-control" placeholder="Придумайте пароль" required>
+                </div>
+                <div class="form-group">
+                    <label for="regPasswordConfirm">Подтверждение пароля</label>
+                    <input type="password" id="regPasswordConfirm" class="form-control" placeholder="Повторите пароль" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
+                <p style="text-align: center; margin-top: 15px; color: var(--secondary);">
+                    Уже есть аккаунт? <a href="#" onclick="switchToLogin()" style="color: var(--primary);">Войти</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Modal functions
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        function switchToRegister() {
+            closeModal('loginModal');
+            setTimeout(() => openModal('registerModal'), 300);
+        }
+
+        function switchToLogin() {
+            closeModal('registerModal');
+            setTimeout(() => openModal('loginModal'), 300);
+        }
+
+        // Search functions
+        function performSearch() {
+            const title = document.getElementById('searchTitle').value;
+            const author = document.getElementById('searchAuthor').value;
+            const category = document.getElementById('searchCategory').value;
+            const year = document.getElementById('searchYear').value;
+            const availability = document.getElementById('searchAvailability').value;
+
+            console.log('Поиск выполнен:', { title, author, category, year, availability });
+
+            // В реальном приложении здесь был бы AJAX-запрос к серверу
+            document.getElementById('resultsCount').textContent = '8';
+
+            // Показываем уведомление
+            alert('Поиск выполнен! Показаны результаты по вашему запросу.');
+        }
+
+        function clearSearch() {
+            document.getElementById('searchTitle').value = '';
+            document.getElementById('searchAuthor').value = '';
+            document.getElementById('searchCategory').value = '';
+            document.getElementById('searchYear').value = '';
+            document.getElementById('searchAvailability').value = '';
+            document.getElementById('searchSort').value = 'relevance';
+
+            document.getElementById('resultsCount').textContent = '8';
+            alert('Фильтры очищены!');
+        }
+
+        function filterByCategory(category) {
+            document.getElementById('searchCategory').value = category;
+            performSearch();
+        }
+
+        function showBorrowModal() {
+            if (confirm('Вы хотите взять эту книгу? Для завершения операции войдите в систему или зарегистрируйтесь.')) {
+                openModal('loginModal');
+            }
+        }
+
+        function showReservationModal() {
+            if (confirm('Вы можете оставить заявку на эту книгу. Мы уведомим вас, когда она станет доступна. Продолжить?')) {
+                openModal('registerModal');
+            }
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        // Form submission handlers
+        document.querySelectorAll('.modal-form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('В реальном приложении форма была бы отправлена на сервер');
+                closeModal('loginModal');
+                closeModal('registerModal');
+            });
+        });
+
+        // Animate book cards on load
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.book-card, .category-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    card.style.transition = 'opacity 0.5s, transform 0.5s';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html>

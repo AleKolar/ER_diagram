@@ -38,7 +38,7 @@ app.include_router(books_router)
 
 # Настройка CORS
 app.add_middleware(
-    (CORSMiddleware),
+    CORSMiddleware,
     allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
@@ -65,6 +65,20 @@ async def dashboard(request: Request):
     }
 
     return templates.TemplateResponse("dashboard.html", context)
+
+@app.get("/users_dashboard", response_class=HTMLResponse)
+async def users_dashboard(request: Request):
+    """
+    Главная страница библиотечной системы
+    Возвращает HTML шаблон с примерными данными для демонстрации
+    """
+    # Данные для демонстрации (примерные)
+    context = {
+        "request": request,
+        "current_year": datetime.now().year
+    }
+
+    return templates.TemplateResponse("users_dashboard.html", context)
 
 
 

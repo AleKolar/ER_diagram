@@ -1,4 +1,3 @@
-<!-- templates/dashboard.html -->
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -7,87 +6,108 @@
     <title>Библиотечная система</title>
     <style>
         :root {
-            --primary: #2563eb;
-            --primary-light: #dbeafe;
-            --secondary: #64748b;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --light: #f8fafc;
-            --dark: #1e293b;
-            --gray: #94a3b8;
-            --border: #e2e8f0;
+            --primary: #4361ee;
+            --primary-light: #e0e7ff;
+            --secondary: #6c757d;
+            --success: #06d6a0;
+            --warning: #ffd166;
+            --danger: #ef476f;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #adb5bd;
+            --border: #dee2e6;
+            --card-bg: #ffffff;
+            --sidebar-bg: #1e293b;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
         }
 
         body {
-            background: #f8fafc;
-            color: #334155;
-            line-height: 1.5;
-        }
-
-        .container {
-            display: grid;
-            grid-template-columns: 280px 1fr;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: var(--dark);
             min-height: 100vh;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            background: white;
-            border-right: 1px solid var(--border);
-            padding: 2rem 0;
-            position: sticky;
-            top: 0;
-            height: 100vh;
-            overflow-y: auto;
-        }
-
-        .logo {
-            padding: 0 1.5rem 2rem;
-            margin-bottom: 1rem;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .logo h1 {
-            font-size: 1.5rem;
-            color: var(--primary);
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .logo-icon {
-            background: var(--primary);
-            color: white;
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.25rem;
+            padding: 40px;
+        }
+
+        /* Основной контейнер для десктопа */
+        .desktop-container {
+            width: 100%;
+            max-width: 1800px;
+            height: 95vh;
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 25px 75px rgba(0,0,0,0.3);
+            display: grid;
+            grid-template-columns: 280px 1fr;
+        }
+
+        /* Sidebar для десктопа */
+        .desktop-sidebar {
+            background: var(--sidebar-bg);
+            color: white;
+            padding: 30px 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 0 25px 30px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 30px;
+        }
+
+        .app-logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), #764ba2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+        }
+
+        .app-name h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 5px;
+        }
+
+        .app-name p {
+            color: rgba(255,255,255,0.7);
+            font-size: 14px;
         }
 
         .nav-section {
-            padding: 0 1.5rem;
-            margin-bottom: 2rem;
+            padding: 0 25px;
+            margin-bottom: 30px;
         }
 
         .nav-title {
-            font-size: 0.875rem;
+            font-size: 13px;
             font-weight: 600;
-            color: var(--gray);
+            color: rgba(255,255,255,0.5);
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 0.75rem;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
         }
 
         .nav-menu {
@@ -95,470 +115,572 @@
         }
 
         .nav-item {
-            margin-bottom: 0.5rem;
+            margin-bottom: 8px;
         }
 
         .nav-link {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            padding: 0.75rem 1rem;
-            color: var(--secondary);
+            gap: 15px;
+            padding: 16px 20px;
+            color: rgba(255,255,255,0.8);
             text-decoration: none;
-            border-radius: 8px;
-            transition: all 0.2s;
+            border-radius: 12px;
+            transition: all 0.3s;
+            font-size: 16px;
             font-weight: 500;
         }
 
         .nav-link:hover {
-            background: var(--primary-light);
-            color: var(--primary);
+            background: rgba(255,255,255,0.1);
+            color: white;
         }
 
         .nav-link.active {
-            background: var(--primary-light);
-            color: var(--primary);
-            font-weight: 600;
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
         }
 
         .nav-icon {
-            font-size: 1.25rem;
+            font-size: 20px;
             width: 24px;
             text-align: center;
         }
 
         .nav-badge {
             margin-left: auto;
-            background: var(--primary);
+            background: rgba(255,255,255,0.2);
             color: white;
-            font-size: 0.75rem;
-            padding: 0.125rem 0.5rem;
+            font-size: 13px;
+            padding: 4px 12px;
             border-radius: 12px;
             font-weight: 600;
         }
 
-        /* Main Content */
-        .main-content {
-            padding: 2rem;
-            overflow-y: auto;
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 25px;
+            border-top: 1px solid rgba(255,255,255,0.1);
         }
 
-        /* Header */
-        .page-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2.5rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .page-title h2 {
-            font-size: 1.875rem;
-            font-weight: 700;
-            color: var(--dark);
-            margin-bottom: 0.5rem;
-        }
-
-        .page-description {
-            color: var(--gray);
-            font-size: 1rem;
-        }
-
-        .user-menu {
+        .user-profile {
             display: flex;
             align-items: center;
-            gap: 1.5rem;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 18px;
         }
 
         .user-info {
-            text-align: right;
+            flex: 1;
         }
 
         .user-name {
             font-weight: 600;
-            color: var(--dark);
+            color: white;
+            font-size: 16px;
+            margin-bottom: 3px;
         }
 
         .user-role {
-            font-size: 0.875rem;
-            color: var(--gray);
+            color: rgba(255,255,255,0.7);
+            font-size: 14px;
         }
 
-        .user-avatar {
-            width: 48px;
-            height: 48px;
-            background: linear-gradient(135deg, var(--primary), #3b82f6);
-            border-radius: 50%;
+        /* Main content для десктопа */
+        .desktop-content {
+            padding: 40px;
+            overflow-y: auto;
             display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 600;
-            font-size: 1.25rem;
+            flex-direction: column;
+            gap: 40px;
         }
 
-        /* Stats Grid */
-        .stats-grid {
+        /* Header внутри контента */
+        .content-header {
+            margin-bottom: 10px;
+        }
+
+        .content-header h2 {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 10px;
+        }
+
+        .content-header p {
+            color: var(--secondary);
+            font-size: 18px;
+        }
+
+        /* Statistics для десктопа */
+        .desktop-stats {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 3rem;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
+            margin-top: 10px;
         }
 
-        .stat-card {
+        .desktop-stat-card {
             background: white;
-            padding: 1.5rem;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-        }
-
-        .stat-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-
-        .stat-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-        }
-
-        .stat-card:nth-child(1) .stat-icon {
-            background: #e0f2fe;
-            color: #0369a1;
-        }
-
-        .stat-card:nth-child(2) .stat-icon {
-            background: #f0f9ff;
-            color: #0ea5e9;
-        }
-
-        .stat-card:nth-child(3) .stat-icon {
-            background: #fef3c7;
-            color: #d97706;
-        }
-
-        .stat-card:nth-child(4) .stat-icon {
-            background: #dcfce7;
-            color: #15803d;
-        }
-
-        .stat-trend {
-            font-size: 0.875rem;
-            font-weight: 600;
-            padding: 0.25rem 0.5rem;
+            padding: 30px;
             border-radius: 20px;
+            border: 1px solid var(--border);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
         }
 
-        .trend-up {
-            background: #dcfce7;
-            color: #15803d;
+        .desktop-stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.12);
         }
 
-        .trend-down {
-            background: #fee2e2;
-            color: #dc2626;
+        .desktop-stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 6px;
+            height: 100%;
+            background: var(--primary);
         }
 
-        .stat-value {
-            font-size: 2.25rem;
+        .desktop-stat-card:nth-child(2)::before { background: var(--success); }
+        .desktop-stat-card:nth-child(3)::before { background: var(--warning); }
+        .desktop-stat-card:nth-child(4)::before { background: var(--danger); }
+
+        .desktop-stat-value {
+            font-size: 48px;
             font-weight: 800;
             color: var(--dark);
-            margin-bottom: 0.5rem;
+            line-height: 1;
+            margin-bottom: 15px;
         }
 
-        .stat-label {
-            color: var(--gray);
-            font-size: 0.9375rem;
+        .desktop-stat-label {
+            color: var(--secondary);
+            font-size: 18px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
-        .stat-subtitle {
-            font-size: 0.875rem;
-            color: var(--gray);
-            margin-top: 0.5rem;
+        .desktop-entity-tag {
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
         }
 
-        /* Table Section */
-        .table-section {
+        .desktop-stat-card:nth-child(2) .desktop-entity-tag {
+            background: rgba(6, 214, 160, 0.1);
+            color: var(--success);
+        }
+        .desktop-stat-card:nth-child(3) .desktop-entity-tag {
+            background: rgba(255, 209, 102, 0.1);
+            color: #e6b800;
+        }
+        .desktop-stat-card:nth-child(4) .desktop-entity-tag {
+            background: rgba(239, 71, 111, 0.1);
+            color: var(--danger);
+        }
+
+        .desktop-stat-change {
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .change-up { color: var(--success); }
+        .change-down { color: var(--danger); }
+
+        /* Loans table для десктопа */
+        .desktop-loans-section {
             background: white;
-            border-radius: 12px;
+            border-radius: 20px;
             border: 1px solid var(--border);
             overflow: hidden;
-            margin-bottom: 2rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
         }
 
-        .table-header {
-            padding: 1.5rem;
+        .loans-header {
+            padding: 30px;
             border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .table-header h3 {
-            font-size: 1.25rem;
-            font-weight: 600;
+        .loans-header h3 {
+            font-size: 24px;
+            font-weight: 700;
             color: var(--dark);
-        }
-
-        .table-actions {
             display: flex;
-            gap: 0.75rem;
-        }
-
-        .btn {
-            padding: 0.625rem 1.25rem;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 0.9375rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: none;
-            display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 12px;
         }
 
-        .btn-primary {
+        .loans-controls {
+            display: flex;
+            gap: 15px;
+        }
+
+        .desktop-btn {
+            padding: 14px 28px;
+            border-radius: 14px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .desktop-btn-primary {
             background: var(--primary);
             color: white;
         }
 
-        .btn-primary:hover {
-            background: #1d4ed8;
+        .desktop-btn-primary:hover {
+            background: #3a56d4;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(67, 97, 238, 0.3);
         }
 
-        .btn-secondary {
+        .desktop-btn-outline {
             background: white;
             color: var(--primary);
-            border: 1px solid var(--primary);
+            border: 2px solid var(--primary);
         }
 
-        .btn-secondary:hover {
+        .desktop-btn-outline:hover {
             background: var(--primary-light);
         }
 
-        table {
+        .loans-table-container {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .desktop-loans-table {
             width: 100%;
             border-collapse: collapse;
+            min-width: 1000px;
         }
 
-        thead {
-            background: #f8fafc;
-        }
-
-        th {
-            padding: 1rem 1.5rem;
+        .desktop-loans-table th {
+            padding: 22px 30px;
             text-align: left;
             font-weight: 600;
-            color: var(--dark);
-            font-size: 0.875rem;
+            color: var(--secondary);
+            font-size: 15px;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            border-bottom: 1px solid var(--border);
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid var(--border);
+            background: var(--light);
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
 
-        td {
-            padding: 1rem 1.5rem;
+        .desktop-loans-table td {
+            padding: 22px 30px;
             border-bottom: 1px solid var(--border);
             color: var(--dark);
+            font-size: 16px;
         }
 
-        tbody tr:hover {
-            background: #f8fafc;
+        .desktop-loans-table tr:hover {
+            background: var(--light);
         }
 
-        .status {
+        .desktop-status-badge {
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
-            padding: 0.375rem 0.75rem;
+            gap: 10px;
+            padding: 10px 20px;
             border-radius: 20px;
-            font-size: 0.875rem;
+            font-size: 15px;
             font-weight: 600;
         }
 
-        .status-active {
-            background: #dcfce7;
-            color: #166534;
+        .desktop-status-on-loan {
+            background: rgba(67, 97, 238, 0.1);
+            color: var(--primary);
         }
 
-        .status-returned {
-            background: #eff6ff;
-            color: #1e40af;
+        .desktop-status-returned {
+            background: rgba(6, 214, 160, 0.1);
+            color: var(--success);
         }
 
-        .status-overdue {
-            background: #fef2f2;
-            color: #991b1b;
-        }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
+        .desktop-status-dot {
+            width: 12px;
+            height: 12px;
             border-radius: 50%;
         }
 
-        .status-active .status-dot {
-            background: #166534;
-        }
+        .desktop-status-on-loan .desktop-status-dot { background: var(--primary); }
+        .desktop-status-returned .desktop-status-dot { background: var(--success); }
 
-        .status-returned .status-dot {
-            background: #1e40af;
-        }
-
-        .status-overdue .status-dot {
-            background: #991b1b;
-        }
-
-        /* Quick Actions */
-        .quick-actions {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
-
-        .action-card {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 12px;
+        /* Database info для десктопа */
+        .desktop-db-info {
+            background: var(--light);
+            border-radius: 20px;
+            padding: 30px;
             border: 1px solid var(--border);
-            text-align: center;
-            transition: all 0.2s;
-            cursor: pointer;
         }
 
-        .action-card:hover {
-            border-color: var(--primary);
-            transform: translateY(-2px);
+        .db-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
         }
 
-        .action-icon {
-            width: 56px;
-            height: 56px;
+        .db-icon {
+            width: 50px;
+            height: 50px;
             background: var(--primary-light);
-            color: var(--primary);
             border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
-            margin: 0 auto 1rem;
+            font-size: 24px;
+            color: var(--primary);
         }
 
-        .action-title {
-            font-weight: 600;
+        .db-header h4 {
+            font-size: 22px;
+            font-weight: 700;
             color: var(--dark);
-            margin-bottom: 0.5rem;
         }
 
-        .action-description {
-            color: var(--gray);
-            font-size: 0.875rem;
+        .db-entities-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 20px;
         }
 
-        /* DB Info */
-        .db-info {
-            margin-top: 3rem;
-            padding: 1.5rem;
+        .db-entity-card {
             background: white;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            font-family: 'SF Mono', monospace;
-            font-size: 0.875rem;
+            padding: 25px;
+            border-radius: 16px;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: 2px solid transparent;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.05);
         }
 
-        .db-title {
-            font-weight: 600;
-            color: var(--dark);
-            margin-bottom: 0.75rem;
+        .db-entity-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .db-entity-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--primary-light);
+            border-radius: 16px;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-        }
-
-        .db-entities {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.75rem;
-        }
-
-        .db-entity {
-            background: var(--primary-light);
+            justify-content: center;
+            font-size: 28px;
             color: var(--primary);
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            font-weight: 600;
-            font-size: 0.875rem;
+            margin: 0 auto 20px;
         }
 
-        /* Responsive */
-        @media (max-width: 1024px) {
-            .container {
-                grid-template-columns: 1fr;
+        .db-entity-name {
+            font-weight: 700;
+            color: var(--dark);
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .db-entity-count {
+            font-size: 15px;
+            color: var(--secondary);
+        }
+
+        /* Quick stats для десктопа */
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .quick-stat {
+            background: white;
+            padding: 25px;
+            border-radius: 18px;
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .quick-stat:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .quick-stat-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+        }
+
+        .quick-stat:nth-child(1) .quick-stat-icon {
+            background: rgba(67, 97, 238, 0.1);
+            color: var(--primary);
+        }
+
+        .quick-stat:nth-child(2) .quick-stat-icon {
+            background: rgba(6, 214, 160, 0.1);
+            color: var(--success);
+        }
+
+        .quick-stat:nth-child(3) .quick-stat-icon {
+            background: rgba(255, 209, 102, 0.1);
+            color: #e6b800;
+        }
+
+        .quick-stat-info {
+            flex: 1;
+        }
+
+        .quick-stat-value {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--dark);
+            line-height: 1;
+            margin-bottom: 5px;
+        }
+
+        .quick-stat-label {
+            color: var(--secondary);
+            font-size: 16px;
+        }
+
+        /* Адаптивность для больших экранов */
+        @media (min-width: 1920px) {
+            .desktop-container {
+                max-width: 2000px;
+                height: 100vh;
             }
 
-            .sidebar {
-                display: none;
+            .desktop-content {
+                padding: 50px;
+                gap: 50px;
             }
 
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
+            .desktop-stat-card {
+                padding: 35px;
+            }
+
+            .desktop-stat-value {
+                font-size: 52px;
+            }
+
+            .desktop-stat-label {
+                font-size: 20px;
+            }
+
+            .desktop-loans-table th,
+            .desktop-loans-table td {
+                padding: 25px 35px;
+                font-size: 17px;
             }
         }
 
-        @media (max-width: 768px) {
-            .stats-grid {
-                grid-template-columns: 1fr;
+        @media (max-width: 1600px) {
+            .desktop-container {
+                height: 100vh;
             }
 
-            .page-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
+            .desktop-content {
+                padding: 30px;
             }
 
-            .user-menu {
-                align-self: flex-end;
+            .db-entities-grid {
+                grid-template-columns: repeat(3, 1fr);
+                grid-template-rows: repeat(2, auto);
             }
+        }
 
-            .quick-actions {
-                grid-template-columns: 1fr;
-            }
+        /* Прокрутка для таблицы */
+        .loans-table-container::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        .loans-table-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .loans-table-container::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+
+        .loans-table-container::-webkit-scrollbar-thumb:hover {
+            background: #a1a1a1;
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="desktop-container">
         <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="logo">
-                <h1>
-                    <span class="logo-icon">📚</span>
-                    Библиотека
-                </h1>
+        <aside class="desktop-sidebar">
+            <div class="sidebar-header">
+                <div class="app-logo">
+                    <div class="logo-icon">📚</div>
+                    <div class="app-name">
+                        <h1>Библиотека</h1>
+                        <p>Управление системой</p>
+                    </div>
+                </div>
             </div>
 
             <div class="nav-section">
-                <div class="nav-title">Управление</div>
+                <div class="nav-title">Основные разделы</div>
                 <ul class="nav-menu">
                     <li class="nav-item">
-                        <a href="/" class="nav-link active">
+                        <a href="#" class="nav-link active">
                             <span class="nav-icon">📊</span>
                             <span>Дашборд</span>
                             <span class="nav-badge">Главная</span>
@@ -622,206 +744,281 @@
                             <span>Настройки</span>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <span class="nav-icon">📈</span>
+                            <span>Отчеты</span>
+                        </a>
+                    </li>
                 </ul>
             </div>
-        </aside>
 
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- Header -->
-            <header class="page-header">
-                <div class="page-title">
-                    <h2>Библиотечная система</h2>
-                    <p class="page-description">Управление книгами, читателями и выдачами</p>
-                </div>
-
-                <div class="user-menu">
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar">АИ</div>
                     <div class="user-info">
                         <div class="user-name">Иванова А.П.</div>
                         <div class="user-role">Библиотекарь</div>
                     </div>
-                    <div class="user-avatar">АИ</div>
                 </div>
-            </header>
+            </div>
+        </aside>
 
-            <!-- Statistics -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-icon">📚</div>
-                        <div class="stat-trend trend-up">+12%</div>
+        <!-- Main Content -->
+        <main class="desktop-content">
+            <!-- Header -->
+            <div class="content-header">
+                <h2>Библиотечная система</h2>
+                <p>Управление книгами, читателями и выдачами</p>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="quick-stats">
+                <div class="quick-stat">
+                    <div class="quick-stat-icon">📚</div>
+                    <div class="quick-stat-info">
+                        <div class="quick-stat-value">1,250</div>
+                        <div class="quick-stat-label">Всего книг в каталоге</div>
                     </div>
-                    <div class="stat-value">1,250</div>
-                    <div class="stat-label">Всего книг в каталоге</div>
-                    <div class="stat-subtitle">+150 за месяц</div>
                 </div>
-
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-icon">📦</div>
-                        <div class="stat-trend trend-up">+8%</div>
+                <div class="quick-stat">
+                    <div class="quick-stat-icon">📦</div>
+                    <div class="quick-stat-info">
+                        <div class="quick-stat-value">3,750</div>
+                        <div class="quick-stat-label">Физических экземпляров</div>
                     </div>
-                    <div class="stat-value">3,750</div>
-                    <div class="stat-label">Физических экземпляров</div>
-                    <div class="stat-subtitle">В наличии: 3,705</div>
                 </div>
-
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-icon">👥</div>
-                        <div class="stat-trend trend-up">+5%</div>
+                <div class="quick-stat">
+                    <div class="quick-stat-icon">👥</div>
+                    <div class="quick-stat-info">
+                        <div class="quick-stat-value">320</div>
+                        <div class="quick-stat-label">Активных читателей</div>
                     </div>
-                    <div class="stat-value">320</div>
-                    <div class="stat-label">Активных читателей</div>
-                    <div class="stat-subtitle">+15 новых за месяц</div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-icon">📋</div>
-                        <div class="stat-trend trend-down">-3%</div>
-                    </div>
-                    <div class="stat-value">45</div>
-                    <div class="stat-label">Книг на руках</div>
-                    <div class="stat-subtitle">Из них просрочено: 5</div>
                 </div>
             </div>
 
-            <!-- Recent Loans Table -->
-            <section class="table-section">
-                <div class="table-header">
-                    <h3>Последние выдачи</h3>
-                    <div class="table-actions">
-                        <button class="btn btn-secondary">
-                            <span>📊</span> Экспорт
+            <!-- Statistics -->
+            <div class="desktop-stats">
+                <div class="desktop-stat-card">
+                    <div class="desktop-stat-value">1,250</div>
+                    <div class="desktop-stat-label">
+                        Всего книг
+                        <span class="desktop-entity-tag">КНИГА</span>
+                    </div>
+                    <div class="desktop-stat-change change-up">
+                        <span>↗</span> +150 за месяц
+                    </div>
+                </div>
+
+                <div class="desktop-stat-card">
+                    <div class="desktop-stat-value">3,750</div>
+                    <div class="desktop-stat-label">
+                        Экземпляров
+                        <span class="desktop-entity-tag">ЭКЗЕМПЛЯР</span>
+                    </div>
+                    <div class="desktop-stat-change change-up">
+                        <span>↗</span> +300 за месяц
+                    </div>
+                </div>
+
+                <div class="desktop-stat-card">
+                    <div class="desktop-stat-value">320</div>
+                    <div class="desktop-stat-label">
+                        Читателей
+                        <span class="desktop-entity-tag">ЧИТАТЕЛЬ</span>
+                    </div>
+                    <div class="desktop-stat-change change-up">
+                        <span>↗</span> +15 за месяц
+                    </div>
+                </div>
+
+                <div class="desktop-stat-card">
+                    <div class="desktop-stat-value">45</div>
+                    <div class="desktop-stat-label">
+                        Активных выдач
+                        <span class="desktop-entity-tag">ВЫДАЧА</span>
+                    </div>
+                    <div class="desktop-stat-change change-down">
+                        <span>↘</span> -5 за неделю
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Loans -->
+            <section class="desktop-loans-section">
+                <div class="loans-header">
+                    <h3>
+                        <span>📋</span> Последние выдачи
+                    </h3>
+                    <div class="loans-controls">
+                        <button class="desktop-btn desktop-btn-outline">
+                            <span>📤</span> Экспорт данных
                         </button>
-                        <button class="btn btn-primary">
+                        <button class="desktop-btn desktop-btn-primary">
                             <span>➕</span> Новая выдача
                         </button>
                     </div>
                 </div>
 
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Читатель</th>
-                            <th>Книга</th>
-                            <th>Экземпляр</th>
-                            <th>Дата выдачи</th>
-                            <th>Срок возврата</th>
-                            <th>Статус</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>Иванов Иван Иванович</strong></td>
-                            <td>Мастер и Маргарита</td>
-                            <td>ИНВ-2024-00125</td>
-                            <td>15.03.2024</td>
-                            <td>15.04.2024</td>
-                            <td>
-                                <span class="status status-active">
-                                    <span class="status-dot"></span>
-                                    На руках
-                                </span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><strong>Петрова Анна Сергеевна</strong></td>
-                            <td>1984</td>
-                            <td>ИНВ-2023-04567</td>
-                            <td>14.03.2024</td>
-                            <td>14.04.2024</td>
-                            <td>
-                                <span class="status status-returned">
-                                    <span class="status-dot"></span>
-                                    Возвращена
-                                </span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><strong>Сидоров Петр Константинович</strong></td>
-                            <td>Война и мир. Том 1</td>
-                            <td>ИНВ-2022-07891</td>
-                            <td>10.03.2024</td>
-                            <td>10.04.2024</td>
-                            <td>
-                                <span class="status status-overdue">
-                                    <span class="status-dot"></span>
-                                    Просрочена
-                                </span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><strong>Кузнецова Мария Владимировна</strong></td>
-                            <td>Преступление и наказание</td>
-                            <td>ИНВ-2024-00345</td>
-                            <td>12.03.2024</td>
-                            <td>12.04.2024</td>
-                            <td>
-                                <span class="status status-active">
-                                    <span class="status-dot"></span>
-                                    На руках
-                                </span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><strong>Васильев Дмитрий Алексеевич</strong></td>
-                            <td>Анна Каренина</td>
-                            <td>ИНВ-2023-05678</td>
-                            <td>18.03.2024</td>
-                            <td>18.04.2024</td>
-                            <td>
-                                <span class="status status-active">
-                                    <span class="status-dot"></span>
-                                    На руках
-                                </span>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="loans-table-container">
+                    <table class="desktop-loans-table">
+                        <thead>
+                            <tr>
+                                <th>Читатель</th>
+                                <th>Книга</th>
+                                <th>Дата выдачи</th>
+                                <th>Срок возврата</th>
+                                <th>Статус</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Иванов Иван Иванович</strong></td>
+                                <td>Мастер и Маргарита</td>
+                                <td>2024-03-15</td>
+                                <td>2024-04-15</td>
+                                <td>
+                                    <span class="desktop-status-badge desktop-status-on-loan">
+                                        <span class="desktop-status-dot"></span>
+                                        На руках
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Петрова Анна Сергеевна</strong></td>
+                                <td>1984</td>
+                                <td>2024-03-14</td>
+                                <td>2024-04-14</td>
+                                <td>
+                                    <span class="desktop-status-badge desktop-status-returned">
+                                        <span class="desktop-status-dot"></span>
+                                        Возвращена
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Сидоров Петр Константинович</strong></td>
+                                <td>Война и мир. Том 1</td>
+                                <td>2024-03-13</td>
+                                <td>2024-04-13</td>
+                                <td>
+                                    <span class="desktop-status-badge desktop-status-on-loan">
+                                        <span class="desktop-status-dot"></span>
+                                        На руках
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Кузнецова Мария Владимировна</strong></td>
+                                <td>Преступление и наказание</td>
+                                <td>2024-03-12</td>
+                                <td>2024-04-12</td>
+                                <td>
+                                    <span class="desktop-status-badge desktop-status-on-loan">
+                                        <span class="desktop-status-dot"></span>
+                                        На руках
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Васильев Дмитрий Алексеевич</strong></td>
+                                <td>Анна Каренина</td>
+                                <td>2024-03-11</td>
+                                <td>2024-04-11</td>
+                                <td>
+                                    <span class="desktop-status-badge desktop-status-returned">
+                                        <span class="desktop-status-dot"></span>
+                                        Возвращена
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </section>
 
-            <!-- Quick Actions -->
-            <div class="quick-actions">
-                <div class="action-card">
-                    <div class="action-icon">➕</div>
-                    <div class="action-title">Добавить книгу</div>
-                    <div class="action-description">Новая книга в каталог</div>
-                </div>
-                <div class="action-card">
-                    <div class="action-icon">👤</div>
-                    <div class="action-title">Новый читатель</div>
-                    <div class="action-description">Зарегистрировать читателя</div>
-                </div>
-                <div class="action-card">
-                    <div class="action-icon">📝</div>
-                    <div class="action-title">Оформить выдачу</div>
-                    <div class="action-description">Выдать книгу читателю</div>
-                </div>
-                <div class="action-card">
-                    <div class="action-icon">📊</div>
-                    <div class="action-title">Отчеты</div>
-                    <div class="action-description">Статистика и аналитика</div>
-                </div>
-            </div>
-
             <!-- Database Info -->
-            <div class="db-info">
-                <div class="db-title">
-                    <span>📋</span> Структура базы данных (ER-диаграмма)
+            <div class="desktop-db-info">
+                <div class="db-header">
+                    <div class="db-icon">🗃️</div>
+                    <h4>Структура базы данных (ER-диаграмма)</h4>
                 </div>
-                <div class="db-entities">
-                    <span class="db-entity">КНИГИ</span>
-                    <span class="db-entity">КАТАЛОГИ</span>
-                    <span class="db-entity">ЧИТАТЕЛИ</span>
-                    <span class="db-entity">СОТРУДНИКИ</span>
-                    <span class="db-entity">ЭКЗЕМПЛЯРЫ</span>
-                    <span class="db-entity">ВЫДАЧИ</span>
+                <div class="db-entities-grid">
+                    <div class="db-entity-card">
+                        <div class="db-entity-icon">📕</div>
+                        <div class="db-entity-name">КНИГИ</div>
+                        <div class="db-entity-count">1,250 записей</div>
+                    </div>
+                    <div class="db-entity-card">
+                        <div class="db-entity-icon">🗂️</div>
+                        <div class="db-entity-name">КАТАЛОГИ</div>
+                        <div class="db-entity-count">24 категории</div>
+                    </div>
+                    <div class="db-entity-card">
+                        <div class="db-entity-icon">👥</div>
+                        <div class="db-entity-name">ЧИТАТЕЛИ</div>
+                        <div class="db-entity-count">320 пользователей</div>
+                    </div>
+                    <div class="db-entity-card">
+                        <div class="db-entity-icon">👔</div>
+                        <div class="db-entity-name">СОТРУДНИКИ</div>
+                        <div class="db-entity-count">12 сотрудников</div>
+                    </div>
+                    <div class="db-entity-card">
+                        <div class="db-entity-icon">📦</div>
+                        <div class="db-entity-name">ЭКЗЕМПЛЯРЫ</div>
+                        <div class="db-entity-count">3,750 экземпляров</div>
+                    </div>
+                    <div class="db-entity-card">
+                        <div class="db-entity-icon">📋</div>
+                        <div class="db-entity-name">ВЫДАЧИ</div>
+                        <div class="db-entity-count">45 активных</div>
+                    </div>
                 </div>
             </div>
         </main>
     </div>
+
+    <script>
+        // Интерактивность для навигации
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+
+                const sectionName = this.querySelector('span:not(.nav-icon):not(.nav-badge)').textContent;
+                console.log(`Переход в раздел: ${sectionName}`);
+            });
+        });
+
+        // Интерактивность для карточек
+        document.querySelectorAll('.db-entity-card, .desktop-stat-card, .quick-stat').forEach(card => {
+            card.addEventListener('click', function() {
+                this.style.transform = 'translateY(-5px) scale(1.02)';
+                setTimeout(() => {
+                    this.style.transform = 'translateY(-5px) scale(1)';
+                }, 150);
+            });
+        });
+
+        // Имитация загрузки данных
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Библиотечная система загружена');
+            console.log('Разрешение экрана: ' + window.innerWidth + 'x' + window.innerHeight);
+
+            // Анимация появления
+            const cards = document.querySelectorAll('.desktop-stat-card, .quick-stat, .db-entity-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    card.style.transition = 'opacity 0.5s, transform 0.5s';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 50);
+            });
+        });
+    </script>
 </body>
 </html>
-
