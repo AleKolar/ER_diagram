@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Библиотечная система</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        /* Контейнер системы */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Шапка */
+        .header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .header-title {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .header h1 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Кнопки авторизации */
+        .auth-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .auth-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .login-btn {
+            background-color: transparent;
+            border: 1px solid #3498db;
+            color: white;
+        }
+
+        .login-btn:hover {
+            background-color: #3498db;
+        }
+
+        .register-btn {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .register-btn:hover {
+            background-color: #2980b9;
+        }
+
+        /* Навигация */
+        .nav-tabs {
+            display: flex;
+            background-color: #34495e;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 15px 25px;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-align: center;
+            flex: 1;
+        }
+
+        .tab:hover {
+            background-color: #4a6583;
+        }
+
+        .tab.active {
+            background-color: #3498db;
+            font-weight: bold;
+        }
+
+        /* Основной контент */
+        .content {
+            display: none;
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .content.active {
+            display: block;
+        }
+
+        /* Панель статистики */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+            border-left: 4px solid #3498db;
+        }
+
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .stat-label {
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+
+        /* Таблицы */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .data-table th {
+            background-color: #34495e;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .data-table td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .data-table tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        /* Формы */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+
+        .btn-primary {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+
+        .btn-success {
+            background-color: #2ecc71;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+
+        .btn-danger {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+
+        /* Поиск */
+        .search-box {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .search-box input {
+            padding: 12px 45px 12px 15px;
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #7f8c8d;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .auth-buttons {
+                align-self: flex-end;
+                margin-top: -40px;
+            }
+
+            .nav-tabs {
+                flex-direction: column;
+            }
+
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                align-items: stretch;
+            }
+
+            .auth-buttons {
+                align-self: stretch;
+                margin-top: 10px;
+                justify-content: space-between;
+            }
+
+            .auth-btn {
+                flex: 1;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Шапка системы -->
+        <header class="header">
+            <div class="header-title">
+                <h1>📚 Библиотечная система</h1>
+                <p>Управление книгами, читателями и выдачами</p>
+            </div>
+
+            <!-- Кнопки авторизации -->
+            <div class="auth-buttons">
+                <button class="auth-btn login-btn" onclick="showLoginModal()">Вход</button>
+                <button class="auth-btn register-btn" onclick="showRegisterModal()">Регистрация</button>
+            </div>
+        </header>
+
+        <!-- Навигационные вкладки -->
+        <div class="nav-tabs">
+            <div class="tab active" onclick="showTab('dashboard')">📊 Дашборд</div>
+            <div class="tab" onclick="showTab('books')">📚 Книги</div>
+            <div class="tab" onclick="showTab('readers')">👥 Читатели</div>
+            <div class="tab" onclick="showTab('issues')">📅 Выдачи</div>
+            <div class="tab" onclick="showTab('catalogs')">🗂️ Каталоги</div>
+            <div class="tab" onclick="showTab('staff')">👨‍💼 Сотрудники</div>
+        </div>
+
+        <!-- Модальное окно для входа -->
+        <div id="loginModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+            <div style="background-color: white; padding: 30px; border-radius: 8px; width: 90%; max-width: 400px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
+                <h2 style="margin-bottom: 20px; color: #2c3e50;">Вход в систему</h2>
+                <div class="form-group">
+                    <label>Электронная почта:</label>
+                    <input type="email" class="form-control" placeholder="example@email.com">
+                </div>
+                <div class="form-group">
+                    <label>Пароль:</label>
+                    <input type="password" class="form-control" placeholder="Введите пароль">
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button class="btn btn-primary" style="flex: 1;" onclick="login()">Войти</button>
+                    <button class="btn" style="flex: 1; background-color: #ddd;" onclick="hideLoginModal()">Отмена</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Модальное окно для регистрации -->
+        <div id="registerModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+            <div style="background-color: white; padding: 30px; border-radius: 8px; width: 90%; max-width: 400px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
+                <h2 style="margin-bottom: 20px; color: #2c3e50;">Регистрация</h2>
+                <div class="form-group">
+                    <label>ФИО:</label>
+                    <input type="text" class="form-control" placeholder="Иванов Иван Иванович">
+                </div>
+                <div class="form-group">
+                    <label>Электронная почта:</label>
+                    <input type="email" class="form-control" placeholder="example@email.com">
+                </div>
+                <div class="form-group">
+                    <label>Пароль:</label>
+                    <input type="password" class="form-control" placeholder="Придумайте пароль">
+                </div>
+                <div class="form-group">
+                    <label>Подтверждение пароля:</label>
+                    <input type="password" class="form-control" placeholder="Повторите пароль">
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button class="btn btn-success" style="flex: 1;" onclick="register()">Зарегистрироваться</button>
+                    <button class="btn" style="flex: 1; background-color: #ddd;" onclick="hideRegisterModal()">Отмена</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Дашборд (Главная страница) -->
+        <div id="dashboard" class="content active">
+            <h2>📊 Статистика библиотеки</h2>
+            <div class="stats-container">
+                <div class="stat-card">
+                    <div class="stat-value">1,250</div>
+                    <div class="stat-label">Всего книг (КНИГА)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">3,750</div>
+                    <div class="stat-label">Экземпляров (ЭКЗЕМПЛЯР)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">320</div>
+                    <div class="stat-label">Читателей (ЧИТАТЕЛЬ)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">45</div>
+                    <div class="stat-label">Активных выдач (ВЫДАЧА)</div>
+                </div>
+            </div>
+
+            <!-- Быстрый поиск (связь с КНИГА и ЧИТАТЕЛЬ) -->
+            <div class="search-box">
+                <input type="text" placeholder="🔍 Поиск по книгам, авторам, читателям...">
+            </div>
+
+            <h3>Информация по Читателям с задолженностями</h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Читатель (ЧИТАТЕЛЬ.ФИО)</th>
+                        <th>Книга (КНИГА.название)</th>
+                        <th>Дата выдачи (ВЫДАЧА.дата_выдачи)</th>
+                        <th>Статус</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Иванов И.И.</td>
+                        <td>Мастер и Маргарита, М.А.Булгаков</td>
+                        <td>2025-05-15</td>
+                        <td><span style="color: #e74c3c;">Просрочена</span></td>
+                    </tr>
+                    <tr>
+                        <td>Петрова А.С.</td>
+                        <td>1984, Д. Оруэлл</td>
+                        <td>2025-07-24</td>
+                        <td><span style="color: #e74c3c;">Просрочена</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Раздел "Книги" -->
+        <div id="books" class="content">
+            <h2>📚 Управление книгами</h2>
+
+            <!-- Форма добавления книги (связь с КНИГА и КАТАЛОГ) -->
+            <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                <h3>Добавить новую книгу</h3>
+                <div class="form-group">
+                    <label>Название книги (КНИГА.название):</label>
+                    <input type="text" class="form-control" placeholder="Введите название">
+                </div>
+                <div class="form-group">
+                    <label>Автор (КНИГА.автор):</label>
+                    <input type="text" class="form-control" placeholder="Введите автора">
+                </div>
+                <div class="form-group">
+                    <label>Каталог (КНИГА.код_каталога → КАТАЛОГ.название):</label>
+                    <select class="form-control">
+                        <option>Художественная литература</option>
+                        <option>Научная литература</option>
+                        <option>Техническая литература</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary">📥 Добавить книгу</button>
+            </div>
+
+            <!-- Список книг -->
+            <h3>Список всех книг</h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID (КНИГА.книга_id)</th>
+                        <th>Название (КНИГА.название)</th>
+                        <th>Автор (КНИГА.автор)</th>
+                        <th>Каталог (КАТАЛОГ.название)</th>
+                        <th>Экземпляры (ЭКЗЕМПЛЯР.общее_количество)</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>001</td>
+                        <td>Мастер и Маргарита</td>
+                        <td>Булгаков М.А.</td>
+                        <td>Художественная литература</td>
+                        <td>15 (12 доступно)</td>
+                        <td>
+                            <button class="btn btn-primary" style="padding: 5px 10px; font-size: 14px;">✏️</button>
+                            <button class="btn btn-danger" style="padding: 5px 10px; font-size: 14px;">🗑️</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Раздел "Читатели" -->
+        <div id="readers" class="content">
+            <h2>👥 Управление читателями</h2>
+
+            <!-- Форма добавления читателя (связь с ЧИТАТЕЛЬ) -->
+            <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                <h3>Добавить нового читателя</h3>
+                <div class="form-group">
+                    <label>ФИО (ЧИТАТЕЛЬ.ФИО):</label>
+                    <input type="text" class="form-control" placeholder="Введите ФИО">
+                </div>
+                <div class="form-group">
+                    <label>Телефон (ЧИТАТЕЛЬ.телефон):</label>
+                    <input type="text" class="form-control" placeholder="Введите телефон">
+                </div>
+                <button class="btn btn-primary">📥 Добавить читателя</button>
+            </div>
+
+            <!-- Список читателей -->
+            <h3>Все читатели</h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID (ЧИТАТЕЛЬ.читатель_id)</th>
+                        <th>ФИО (ЧИТАТЕЛЬ.ФИО)</th>
+                        <th>Телефон (ЧИТАТЕЛЬ.телефон)</th>
+                        <th>Книг на руках (ВЫДАЧА.количество)</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>001</td>
+                        <td>Иванов Иван Иванович</td>
+                        <td>+7 (999) 123-45-67</td>
+                        <td>3 книги</td>
+                        <td>
+                            <button class="btn btn-primary" style="padding: 5px 10px; font-size: 14px;">👁️</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Раздел "Выдачи" -->
+        <div id="issues" class="content">
+            <h2>📅 Управление выдачами</h2>
+
+            <!-- Форма оформления выдачи (связь с ВЫДАЧА, ЧИТАТЕЛЬ, ЭКЗЕМПЛЯР, СОТРУДНИК) -->
+            <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                <h3>Оформить выдачу книги</h3>
+                <div class="form-group">
+                    <label>Читатель (ВЫДАЧА.читатель_id → ЧИТАТЕЛЬ.ФИО):</label>
+                    <select class="form-control">
+                        <option>Выберите читателя...</option>
+                        <option>Иванов И.И.</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Книга (ВЫДАЧА.экземпляр_id → ЭКЗЕМПЛЯР.книга_id → КНИГА.название):</label>
+                    <select class="form-control">
+                        <option>Выберите книгу...</option>
+                        <option>Мастер и Маргарита (экз. №001)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Сотрудник (ВЫДАЧА.сотрудник_выдал_id → СОТРУДНИК.ФИО):</label>
+                    <input type="text" class="form-control" value="Петров П.П. (текущий пользователь)" readonly>
+                </div>
+                <button class="btn btn-success">✅ Оформить выдачу</button>
+            </div>
+
+            <!-- Активные выдачи -->
+            <h3>Активные выдачи (дата_возврата IS NULL)</h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID выдачи (ВЫДАЧА.выдача_id)</th>
+                        <th>Читатель</th>
+                        <th>Книга</th>
+                        <th>Дата выдачи (ВЫДАЧА.дата_выдачи)</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>2024-001</td>
+                        <td>Иванов И.И.</td>
+                        <td>Мастер и Маргарита</td>
+                        <td>2024-03-15</td>
+                        <td>
+                            <button class="btn btn-success" style="padding: 5px 10px; font-size: 14px;">🔄 Возврат</button>
+                            <button class="btn btn-primary" style="padding: 5px 10px; font-size: 14px;">📅 Продлить</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Раздел "Каталоги" -->
+        <div id="catalogs" class="content">
+            <h2>🗂️ Управление каталогами</h2>
+
+            <!-- Форма добавления каталога (связь с КАТАЛОГ) -->
+            <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                <h3>Добавить новый каталог</h3>
+                <div class="form-group">
+                    <label>Название каталога (КАТАЛОГ.название):</label>
+                    <input type="text" class="form-control" placeholder="Введите название">
+                </div>
+                <button class="btn btn-primary">📥 Добавить каталог</button>
+            </div>
+
+            <!-- Список каталогов -->
+            <h3>Все каталоги</h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID (КАТАЛОГ.код_каталога)</th>
+                        <th>Название (КАТАЛОГ.название)</th>
+                        <th>Кол-во книг (КНИГА WHERE код_каталога = ...)</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>CAT-001</td>
+                        <td>Художественная литература</td>
+                        <td>450 книг</td>
+                        <td>
+                            <button class="btn btn-primary" style="padding: 5px 10px; font-size: 14px;">✏️</button>
+                            <button class="btn btn-danger" style="padding: 5px 10px; font-size: 14px;">🗑️</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Раздел "Сотрудники" (только для администратора) -->
+        <div id="staff" class="content">
+            <h2>👨‍💼 Управление сотрудниками</h2>
+
+            <!-- Форма добавления сотрудника (связь с СОТРУДНИК) -->
+            <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                <h3>Добавить нового сотрудника</h3>
+                <div class="form-group">
+                    <label>ФИО (СОТРУДНИК.ФИО):</label>
+                    <input type="text" class="form-control" placeholder="Введите ФИО">
+                </div>
+                <div class="form-group">
+                    <label>Должность (СОТРУДНИК.должность):</label>
+                    <input type="text" class="form-control" placeholder="Введите должность">
+                </div>
+                <button class="btn btn-primary">📥 Добавить сотрудника</button>
+            </div>
+
+            <!-- Список сотрудников -->
+            <h3>Все сотрудники</h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID (СОТРУДНИК.сотрудник_id)</th>
+                        <th>ФИО (СОТРУДНИК.ФИО)</th>
+                        <th>Должность (СОТРУДНИК.должность)</th>
+                        <th>Выдач оформлено (ВЫДАЧА WHERE сотрудник_выдал_id = ...)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>EMP-001</td>
+                        <td>Петров Петр Петрович</td>
+                        <td>Библиотекарь</td>
+                        <td>125 выдач</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Подвал -->
+        <footer style="text-align: center; padding: 20px; color: #7f8c8d; font-size: 14px;">
+            <p>📚 Библиотечная система | ER-диаграмма: КНИГА, КАТАЛОГ, ЧИТАТЕЛЬ, СОТРУДНИК, ЭКЗЕМПЛЯР, ВЫДАЧА</p>
+            <p>Учебный проект | Все данные синтетические</p>
+        </footer>
+    </div>
+
+    <script>
+        // Функция переключения между вкладками
+        function showTab(tabName) {
+            // Скрыть все вкладки
+            const contents = document.querySelectorAll('.content');
+            contents.forEach(content => {
+                content.classList.remove('active');
+            });
+
+            // Убрать активный класс со всех вкладок
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Показать выбранную вкладку
+            document.getElementById(tabName).classList.add('active');
+
+            // Найти и активировать соответствующую кнопку
+            tabs.forEach(tab => {
+                if (tab.getAttribute('onclick') === `showTab('${tabName}')`) {
+                    tab.classList.add('active');
+                }
+            });
+        }
+
+        // Функции для модальных окон
+        function showLoginModal() {
+            document.getElementById('loginModal').style.display = 'flex';
+        }
+
+        function hideLoginModal() {
+            document.getElementById('loginModal').style.display = 'none';
+        }
+
+        function showRegisterModal() {
+            document.getElementById('registerModal').style.display = 'flex';
+        }
+
+        function hideRegisterModal() {
+            document.getElementById('registerModal').style.display = 'none';
+        }
+
+        // Функции для авторизации (заглушки)
+        function login() {
+            alert('Функция входа в разработке');
+            hideLoginModal();
+        }
+
+        function register() {
+            alert('Функция регистрации в разработке');
+            hideRegisterModal();
+        }
+
+        // Закрытие модальных окон при клике вне их
+        window.onclick = function(event) {
+            const loginModal = document.getElementById('loginModal');
+            const registerModal = document.getElementById('registerModal');
+
+            if (event.target === loginModal) {
+                hideLoginModal();
+            }
+            if (event.target === registerModal) {
+                hideRegisterModal();
+            }
+        }
+
+        // Имитация данных (в реальном проекте здесь были бы AJAX-запросы к БД)
+        console.log("Система загружена. Таблицы БД:");
+        console.log("- КНИГА (книга_id, название, автор, код_каталога)");
+        console.log("- КАТАЛОГ (код_каталога, название)");
+        console.log("- ЧИТАТЕЛЬ (читатель_id, ФИО, телефон)");
+        console.log("- СОТРУДНИК (сотрудник_id, ФИО, должность)");
+        console.log("- ЭКЗЕМПЛЯР (экземпляр_id, книга_id, инвентарный_номер)");
+        console.log("- ВЫДАЧА (выдача_id, экземпляр_id, читатель_id, сотрудник_выдал_id, дата_выдачи)");
+    </script>
+</body>
+</html>

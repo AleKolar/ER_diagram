@@ -80,6 +80,20 @@ async def users_dashboard(request: Request):
 
     return templates.TemplateResponse("users_dashboard.html", context)
 
+@app.get("/library_dashboard", response_class=HTMLResponse)
+async def library_dashboard(request: Request):
+    """
+    Главная страница v.1.0 библиотечной системы
+    Возвращает HTML шаблон с примерными данными для демонстрации
+    """
+    # Данные для демонстрации (примерные)
+    context = {
+        "request": request,
+        "current_year": datetime.now().year
+    }
+
+    return templates.TemplateResponse("library_dashboard.html", context)
+
 
 
 

@@ -2,8 +2,8 @@
 """
 Модели SQLAlchemy для библиотечной системы с русскими комментариями
 """
-from sqlalchemy import String, ForeignKey, DateTime, Text, Integer, func
-from sqlalchemy.orm import relationship, Mapped, mapped_column
+from sqlalchemy import String, ForeignKey, DateTime, Text, Integer, func, CheckConstraint
+from sqlalchemy.orm import relationship, Mapped, mapped_column, validates
 from datetime import datetime
 from src.database.er_db import Model
 from typing import Optional, List
@@ -179,7 +179,35 @@ class Employee(Model):
 class Issue(Model):
     """Выдача книги читателю"""
     __tablename__ = 'issues'
-    __table_args__ = {'comment': 'Выдачи книг читателям'}
+    __table_args__ = (
+        # Основные констрейнты
+        CheckConstraint(
+            'due_date > issue_date',
+            name='chk_due_after_issue'
+        ),
+        CheckConstraint(
+            'return_date IS NULL OR return_date >= issue_date',
+            name='chk_return_after_issue'
+        ),
+        # Нельзя вернуть книгу раньше, чем она была выдана
+        CheckConstraint(
+            'return_date IS NULL OR return_date >= issue_date',
+            name='return_date_not_before_issue'
+        ),
+        {'comment': 'Выдачи книг читателям'}
+    )
+
+    @validates('return_date')
+    def validate_return_date(self, key, return_date):
+        if return_date and return_date < self.issue_date:
+            raise ValueError("Дата возврата не может быть раньше даты выдачи")
+        return return_date
+
+    @validates('due_date')
+    def validate_due_date(self, key, due_date):
+        if due_date <= self.issue_date:
+            raise ValueError("Срок возврата должен быть позже даты выдачи")
+        return due_date
 
     issue_id: Mapped[int] = mapped_column(
         Integer, primary_key=True, autoincrement=True,
@@ -230,3 +258,17 @@ class Issue(Model):
     received_by: Mapped[Optional['Employee']] = relationship(
         'Employee', foreign_keys=[employee_received_id], back_populates='received_issues'
     )
+
+    @property
+    def status(self) -> str:
+        """
+        Вычисляемый поле: status для фронтенда
+        """
+        if self.return_date:
+            return "Возвращена"
+
+        current_date = datetime.now()
+        if current_date > self.due_date:
+            return "Просрочена"
+        else:
+            return "На руках"
